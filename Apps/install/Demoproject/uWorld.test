@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="utf-8"?>
+<IntegratedUnitTest>
+<class name="TWorld">
+<defines />
+<usecustomsetupcode>true</usecustomsetupcode>
+<customsetupcode>Application.CreateForm(TfrmWorld, frmWorld);</customsetupcode>
+<initcode>TestObj := TWorld.Create();
+TestObj.Name := 'The earth';</initcode>
+<vars>oTestableWorldObject: TWorldObject;</vars>
+<extrauses />
+<variables />
+<function name="AddWorldObject" type="integer">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode>TestObj := TWorld.Create();</initcode>
+<vars />
+<tests>
+<test displayname="TestPerson1">
+<description />
+<defines />
+<initcode>TestObj := TWorld.Create();
+oTestableWorldObject := TPerson.Create;</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="TWorldObject" name="aWorldObject">TPerson.Create</param>
+</params>
+<equals not="false">0</equals>
+<implies />
+</test>
+<test displayname="TestingTwoPersonsAtOnce">
+<description />
+<defines />
+<initcode>TestObj := TWorld.Create();
+TestObj.AddWorldObject(TPerson.Create);</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="TWorldObject" name="aWorldObject">TPerson.Create</param>
+</params>
+<equals not="false">1</equals>
+<implies />
+</test>
+<test displayname="t_AddWorldObject_3">
+<description />
+<defines />
+<initcode>TestObj := TWorld.Create();
+aWorldObject.Name := 'test';</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="TWorldObject" name="aWorldObject">TWorldObject.Create</param>
+</params>
+<equals not="false">0</equals>
+<implies>
+<eval>TestObj.WorldObjectCount &gt; -1</eval>
+</implies>
+</test>
+</tests>
+</function>
+<function name="DeleteWorldObject" type="boolean">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode>TestObj := TWorld.Create();</initcode>
+<vars />
+<tests>
+<test displayname="t_DeleteWorldObject_1">
+<description />
+<defines />
+<initcode>TestObj := TWorld.Create();</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="integer" name="WorldObjectIndex">0</param>
+</params>
+<equals not="false">false</equals>
+<implies />
+</test>
+<test displayname="t_DeleteWorldObject_2">
+<description />
+<defines />
+<initcode>TestObj := TWorld.Create();
+TestObj.AddWorldObject(TPerson.Create);
+TestObj.AddWorldObject(TPerson.Create);</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="integer" name="WorldObjectIndex">0</param>
+</params>
+<equals not="false">true</equals>
+<implies>
+<eval>TestObj.WorldObjectCount = 0</eval>
+</implies>
+</test>
+</tests>
+</function>
+<function name="WorldObjectCount" type="integer">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode />
+<vars />
+<tests>
+<test displayname="EmptyList">
+<description />
+<defines />
+<initcode>TestObj := TWorld.Create();</initcode>
+<vars />
+<preimpliescode />
+<params />
+<equals not="false">-1</equals>
+<implies />
+</test>
+<test displayname="AddedObjects">
+<description />
+<defines />
+<initcode>TestObj := TWorld.Create();
+TestObj.AddWorldObject(TPerson.Create);
+TestObj.AddWorldObject(TPerson.Create);
+TestObj.AddWorldObject(TPerson.Create);</initcode>
+<vars />
+<preimpliescode />
+<params />
+<equals not="false">2</equals>
+<implies />
+</test>
+</tests>
+</function>
+<function name="GetWorldObjectItem" type="TWorldObject">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode>TestObj := TWorld.Create();</initcode>
+<vars />
+<tests>
+<test displayname="GetObject1">
+<description />
+<defines />
+<initcode>TestObj := TWorld.Create();
+oExtraVariabele := TWorldObject.Create;
+oExtraVariabele.name := 'TestObject';
+TestObj.AddWorldObject(oExtraVariabele);</initcode>
+<vars>oExtraVariabele: TWorldObject;</vars>
+<preimpliescode />
+<params>
+<param type="integer" name="WorldObjectIndex">0</param>
+</params>
+<equals not="true">nil</equals>
+<implies>
+<eval>testResult.name = 'TestObject'</eval>
+</implies>
+</test>
+<test displayname="GetObject2">
+<description />
+<defines />
+<initcode>TestObj := TWorld.Create();</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="integer" name="WorldObjectIndex">0</param>
+</params>
+<equals not="false">nil</equals>
+<implies />
+</test>
+</tests>
+</function>
+<function name="GetWorldName" type="string">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode />
+<vars />
+<tests>
+<test displayname="t_GetWorldName_1">
+<description />
+<defines />
+<initcode />
+<vars />
+<preimpliescode />
+<params />
+<equals not="false">The earth</equals>
+<implies />
+</test>
+</tests>
+</function>
+</class>
+<class name="TLivingWorldObject">
+<defines />
+<usecustomsetupcode>true</usecustomsetupcode>
+<customsetupcode>Application.CreateForm(TfrmWorld, frmWorld);</customsetupcode>
+<initcode />
+<vars />
+<extrauses />
+<variables />
+<function name="IsBorn" type="boolean">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode />
+<vars />
+<tests>
+<test displayname="InitialCondition">
+<description />
+<defines />
+<initcode>TestObj := TLivingWorldObject.Create();</initcode>
+<vars />
+<preimpliescode />
+<params />
+<equals not="false">False</equals>
+<implies />
+</test>
+<test displayname="AfterSetBirthDate">
+<description />
+<defines />
+<initcode>TestObj := TLivingWorldObject.Create();
+TestObj.SetBirthDate(now());</initcode>
+<vars />
+<preimpliescode />
+<params />
+<equals not="false">true</equals>
+<implies />
+</test>
+</tests>
+</function>
+<function name="Reproduce" type="TLivingWorldObject">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode />
+<vars />
+<tests>
+<test displayname="ReproTest1">
+<description />
+<defines />
+<initcode>TestObj := TLivingWorldObject.Create();</initcode>
+<vars />
+<preimpliescode />
+<params />
+<equals not="true">nil</equals>
+<implies>
+<eval>testResult.IsBorn</eval>
+</implies>
+</test>
+</tests>
+</function>
+<function name="Parent" type="TLivingWorldObject">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode>TestObj := TLivingWorldObject.Create();</initcode>
+<vars>ParentObject: TLivingWorldObject;</vars>
+<tests>
+<test displayname="ParentTest">
+<description />
+<defines />
+<initcode>ParentObject := TLivingWorldObject.Create;
+ParentObject.SetBirthDate(Date()-356);
+TestObj := TinhTest(ParentObject.Reproduce);</initcode>
+<vars />
+<preimpliescode />
+<params />
+<equals not="true">nil</equals>
+<implies>
+<eval>TestObj.IsBorn</eval>
+</implies>
+</test>
+</tests>
+</function>
+<function name="SetBirthDate" type="void">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode />
+<vars />
+<tests>
+<test displayname="t_SetBirthDate_1">
+<description />
+<defines />
+<initcode>TestObj := TLivingWorldObject.Create();</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="integer" name="YearsOld">2</param>
+</params>
+<equals not="false" />
+<implies>
+<eval>TestObj.Age = 2</eval>
+</implies>
+</test>
+<test displayname="t_SetBirthDate_2">
+<description />
+<defines />
+<initcode>TestObj := TLivingWorldObject.Create();</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="integer" name="YearsOld">4</param>
+</params>
+<equals not="false" />
+<implies>
+<eval>TestObj.Age = 4</eval>
+</implies>
+</test>
+</tests>
+</function>
+<function name="Age" type="integer">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode />
+<vars />
+<tests>
+<test displayname="t_Age_1">
+<description />
+<defines />
+<initcode>TestObj := TLivingWorldObject.Create();</initcode>
+<vars />
+<preimpliescode />
+<params />
+<equals not="false">-1</equals>
+<implies />
+</test>
+<test displayname="t_Age_2">
+<description />
+<defines />
+<initcode>TestObj := TLivingWorldObject.Create();
+TestObj.SetBirthDate(IncYear(date(),-3));</initcode>
+<vars />
+<preimpliescode />
+<params />
+<equals not="false">3</equals>
+<implies />
+</test>
+</tests>
+</function>
+<function name="SetBirthDate" type="void">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode />
+<vars />
+<tests>
+<test displayname="t_SetBirthDate_1">
+<description />
+<defines />
+<initcode>TestObj := TLivingWorldObject.Create();</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="TDateTime" name="aDate">23-09-1984</param>
+</params>
+<equals not="false" />
+<implies>
+<eval>TestObj.Age = 29</eval>
+</implies>
+</test>
+</tests>
+</function>
+</class>
+<class name="TPerson">
+<defines />
+<usecustomsetupcode>true</usecustomsetupcode>
+<customsetupcode>Application.CreateForm(TfrmWorld, frmWorld);</customsetupcode>
+<initcode />
+<vars />
+<extrauses />
+<variables />
+<function name="SetLength" type="void">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode />
+<vars />
+<tests>
+<test displayname="CheckNormalLength1">
+<description />
+<defines />
+<initcode>TestObj := TPerson.Create;</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="integer" name="Value">175</param>
+</params>
+<equals not="false" />
+<implies>
+<eval>TestObj.Length = 175</eval>
+</implies>
+</test>
+<test displayname="CheckNormalLength2">
+<description />
+<defines />
+<initcode>TestObj := TPerson.Create;</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="integer" name="Value">199</param>
+</params>
+<equals not="false" />
+<implies>
+<eval>TestObj.Length = 199</eval>
+</implies>
+</test>
+<test displayname="CheckExceptionalLength1">
+<description />
+<defines />
+<initcode>TestObj := TPerson.Create;</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="integer" name="Value">-10</param>
+</params>
+<equals not="false" />
+<implies>
+<eval>TestObj.Length = 0</eval>
+</implies>
+</test>
+<test displayname="CheckExceptionalLength2">
+<description />
+<defines />
+<initcode>TestObj := TPerson.Create;</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="integer" name="Value">1000</param>
+</params>
+<equals not="false" />
+<implies>
+<eval>TestObj.Length = 250</eval>
+</implies>
+</test>
+</tests>
+</function>
+</class>
+<class name="">
+<defines />
+<usecustomsetupcode>true</usecustomsetupcode>
+<customsetupcode>Application.CreateForm(TfrmWorld, frmWorld);</customsetupcode>
+<initcode />
+<vars />
+<extrauses />
+<variables />
+<function name="CalculateBMI" type="double">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode>TestObj := TInhTest.Create();</initcode>
+<vars />
+<tests>
+<test displayname="BMITest1">
+<description />
+<defines />
+<initcode>TestObj := TInhTest.Create();</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="double" name="Length">1.75</param>
+<param type="double" name="Weight">75</param>
+</params>
+<equals not="false">24</equals>
+<implies />
+</test>
+<test displayname="BMITest2">
+<description />
+<defines />
+<initcode>TestObj := TInhTest.Create();</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="double" name="Length">1.72</param>
+<param type="double" name="Weight">86</param>
+</params>
+<equals not="false">29</equals>
+<implies />
+</test>
+</tests>
+</function>
+<function name="Rounder" type="Extended">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode />
+<vars />
+<tests>
+<test displayname="RoundTest1">
+<description />
+<defines />
+<initcode>TestObj := TInhTest.Create();</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="double" name="Value">2.66</param>
+<param type="Integer" name="Decimals">1</param>
+</params>
+<equals not="false">2.7</equals>
+<implies />
+</test>
+<test displayname="RoundTest2">
+<description />
+<defines />
+<initcode>TestObj := TInhTest.Create();</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="Double" name="Value">2.555</param>
+<param type="Integer" name="Decimals">2</param>
+</params>
+<equals not="false">2.56</equals>
+<implies />
+</test>
+</tests>
+</function>
+<function name="InchToMeters" type="double">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode />
+<vars />
+<tests>
+<test displayname="InchToMeters1">
+<description />
+<defines />
+<initcode>TestObj := TInhTest.Create();</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="double" name="Inch">39.37</param>
+</params>
+<equals not="false">1</equals>
+<implies />
+</test>
+</tests>
+</function>
+</class>
+<class name="TTree">
+<defines />
+<usecustomsetupcode>true</usecustomsetupcode>
+<customsetupcode>Application.CreateForm(TfrmWorld, frmWorld);</customsetupcode>
+<initcode />
+<vars />
+<extrauses />
+<variables />
+<function name="SetLocation" type="void">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode />
+<vars />
+<tests>
+<test displayname="SetLocation1">
+<description />
+<defines />
+<initcode>TestObj := TTree.Create;</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="TTreeLocation" name="Value">tlForest</param>
+</params>
+<equals not="false" />
+<implies>
+<eval>(TestObj.Location = tlForest)</eval>
+</implies>
+</test>
+</tests>
+</function>
+<function name="GetRingCount" type="integer">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode>TestObj := TTree.Create;
+TestObj.SetBirthDate(IncYear(Date,-2));</initcode>
+<vars />
+<tests>
+<test displayname="GetRingCount1">
+<description />
+<defines />
+<initcode />
+<vars />
+<preimpliescode />
+<params />
+<equals not="false">2</equals>
+<implies />
+</test>
+<test displayname="t_GetRingCount_2">
+<description />
+<defines />
+<initcode>TestObj := TTree.Create;</initcode>
+<vars />
+<preimpliescode />
+<params />
+<equals not="false">0</equals>
+<implies />
+</test>
+</tests>
+</function>
+</class>
+</IntegratedUnitTest>

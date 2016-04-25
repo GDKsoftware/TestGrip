@@ -1,0 +1,96 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{2060A7C0-D5B0-49F0-8137-3377C2224778}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Apps\TestGripTester\TestgripProjectTester_DXE10.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\TestIDE\TestIDE.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\TestGripPlugin\IntegratedUnitTest_DXE10.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\UnitBrowser\UnitBrowser.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\UnitSearch\UnitSearch.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\ImpGen\impgen.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="TestgripProjectTester_DXE10">
+        <MSBuild Projects="Apps\TestGripTester\TestgripProjectTester_DXE10.dproj"/>
+    </Target>
+    <Target Name="TestgripProjectTester_DXE10:Clean">
+        <MSBuild Projects="Apps\TestGripTester\TestgripProjectTester_DXE10.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TestgripProjectTester_DXE10:Make">
+        <MSBuild Projects="Apps\TestGripTester\TestgripProjectTester_DXE10.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TestIDE">
+        <MSBuild Projects="Apps\TestIDE\TestIDE.dproj"/>
+    </Target>
+    <Target Name="TestIDE:Clean">
+        <MSBuild Projects="Apps\TestIDE\TestIDE.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TestIDE:Make">
+        <MSBuild Projects="Apps\TestIDE\TestIDE.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="IntegratedUnitTest_DXE10">
+        <MSBuild Projects="Apps\TestGripPlugin\IntegratedUnitTest_DXE10.dproj"/>
+    </Target>
+    <Target Name="IntegratedUnitTest_DXE10:Clean">
+        <MSBuild Projects="Apps\TestGripPlugin\IntegratedUnitTest_DXE10.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IntegratedUnitTest_DXE10:Make">
+        <MSBuild Projects="Apps\TestGripPlugin\IntegratedUnitTest_DXE10.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="UnitBrowser">
+        <MSBuild Projects="Apps\UnitBrowser\UnitBrowser.dproj"/>
+    </Target>
+    <Target Name="UnitBrowser:Clean">
+        <MSBuild Projects="Apps\UnitBrowser\UnitBrowser.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="UnitBrowser:Make">
+        <MSBuild Projects="Apps\UnitBrowser\UnitBrowser.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="UnitSearch">
+        <MSBuild Projects="Apps\UnitSearch\UnitSearch.dproj"/>
+    </Target>
+    <Target Name="UnitSearch:Clean">
+        <MSBuild Projects="Apps\UnitSearch\UnitSearch.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="UnitSearch:Make">
+        <MSBuild Projects="Apps\UnitSearch\UnitSearch.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="impgen">
+        <MSBuild Projects="Apps\ImpGen\impgen.dproj"/>
+    </Target>
+    <Target Name="impgen:Clean">
+        <MSBuild Projects="Apps\ImpGen\impgen.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="impgen:Make">
+        <MSBuild Projects="Apps\ImpGen\impgen.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="TestgripProjectTester_DXE10;TestIDE;IntegratedUnitTest_DXE10;UnitBrowser;UnitSearch;impgen"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="TestgripProjectTester_DXE10:Clean;TestIDE:Clean;IntegratedUnitTest_DXE10:Clean;UnitBrowser:Clean;UnitSearch:Clean;impgen:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="TestgripProjectTester_DXE10:Make;TestIDE:Make;IntegratedUnitTest_DXE10:Make;UnitBrowser:Make;UnitSearch:Make;impgen:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

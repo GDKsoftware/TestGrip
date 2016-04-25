@@ -1,0 +1,147 @@
+html {
+	width: 100%;
+}
+
+body {
+	background-color: #002533;
+	margin: 0px;
+	font-family: "Helvetica Neue", Arial, sans-serif;
+	font-size: 14px;
+	width: 100%;
+	font-weight: bold;
+}
+
+.clear {
+	clear: both;
+}
+
+.fleft {
+	float: left;
+}
+
+.fright {
+	float: right;
+}
+
+h1 {
+	color: #fff;
+	font-size: 20px;
+	margin: 4px 0px 8px 8px;
+}
+
+span.expand-button span.min {
+	display: none;
+}
+
+#container {
+	width: 800px;
+	margin: 0px auto;
+	padding: 8px;
+	background-color: #2c3333;
+	border-radius: 2px;
+}
+
+div.info {
+	float: right;
+	color: #617f7f;
+	text-align: right;
+}
+
+div.class {
+	padding: 8px;
+	color: #fff;
+	background-color: #496161;
+	border-radius: 2px;
+}
+
+	div.class span.label {
+		color: #2c3333;
+	}
+	
+	div.function {
+		background-color: #617f7f;
+		border: 1px solid #3a4d4d;
+		margin-top: 8px;
+		padding: 5px;
+		border-radius: 2px;
+	}
+	
+		div.function-header {
+			padding: 2px 0px 2px 0px;
+		}
+			
+			span.show-tests {
+				padding-left: 4px;
+				font-size: 12px;
+				cursor: pointer;
+				color: #c9dadd;
+			}
+			
+			span.function-result {
+				padding: 0px 4px;
+				margin: 2px 4px;
+				border-radius: 2px;
+			}
+			
+			span.function-result.true {
+				background-color: #78ae2c;
+				border: 1px solid #4f7c10;
+			}
+			
+			span.function-result.false {
+				background-color: #e36d1b;
+				border: 1px solid #a24e12;
+			}
+		
+		div.tests {
+			background-color: #3f5454;
+			border: 1px solid #334444;
+			margin-top: 2px;
+			padding: 4px 6px;
+			border-radius: 2px;
+			display: none;
+		}
+	
+			div.test {
+				margin: 4px 0px;
+				padding: 4px 6px;
+				color: #fff;
+				border-radius: 2px;
+			}
+			
+			div.test.true {
+				background-color: #78ae2c;
+				border: 1px solid #4f7c10;
+			}
+			
+			div.test.false {
+				background-color: #e36d1b;
+				border: 1px solid #a24e12;
+			}
+			
+			div.implies {
+				margin: 0px 8px;
+				font-size: 12px;
+				color: #fff;
+				background-color: #495e5e;
+				border-left: 1px solid #536a6a;
+				border-top: 1px solid #536a6a;
+				border-bottom: 1px solid #405252;
+				border-right: 1px solid #405252;
+			}
+			
+				span.implies-result {
+					padding-left: 4px;
+				}
+			
+				span.implies-result.true {
+					background-color: #78ae2c;
+				}
+				
+				span.implies-result.false {
+					background-color: #e36d1b;
+				}
+				
+				span.implies-content {
+					padding: 2px 8px;
+				}
