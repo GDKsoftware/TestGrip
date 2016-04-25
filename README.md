@@ -21,6 +21,5 @@ You can add ImpGen and some of the other applications as tools in the Delphi IDE
 
 ## Supported Delphi versions
 Older Delphi versions still need some additional testing and will be added soon.
-
-[x] Delphi Seattle
-[x] Delphi Seattle Trial (cannot build or run tests)
+* Delphi Seattle
+* Delphi Seattle Trial (cannot build or run tests)
