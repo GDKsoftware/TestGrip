@@ -668,7 +668,7 @@ begin
     '  R := nil;' + #13#10 +
     '  try' + #13#10 +
     '    Application.Initialize;' + #13#10 +
-    '    Application.OnException := (TTestGripExcept.Create).TestGripExceptionHandler;' + #13#10 +
+    '    {$IFNDEF VER300}Application.OnException := (TTestGripExcept.Create).TestGripExceptionHandler;{$ENDIF}' + #13#10 +
     #13#10 +
     '<SetupCode>' + #13#10 +
     #13#10 +
