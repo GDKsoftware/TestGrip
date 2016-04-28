@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, ComCtrls, ShellAPI, uUnitParser, uPascalDefs;
+  Controls, Forms, Dialogs, ComCtrls, ShellAPI, uUnitParser, uPascalDefs,
+  Contnrs;
 
 type
   TFrmUnitBrowserMain = class(TForm)
@@ -16,6 +17,12 @@ type
     FParser: TUnitParser;
 
     FClassNodeList: TStringList;
+    procedure AddMethodToTree(const methoddef: TMethodDefinition);
+    procedure AddMethodsToTree(const AMethods: TObjectList);
+    procedure AddPropertiesToTree(const AProperties: TObjectList);
+    procedure AddVariablesToTree(const AVariables: TObjectList);
+    procedure AddClassesToTree(const AClasses: TStrings);
+    function AddClassNode(const AClassNodeName: string; const AClassDef: TClassDefinition): TTreeNode;
   public
     { Public declarations }
     procedure AcceptFiles( var msg : TMessage ); message WM_DROPFILES;
@@ -32,11 +39,13 @@ implementation
 
 {$R *.dfm}
 
-uses
-  Contnrs;
-
 const
   C_APPTITLE = 'UnitBrowser v1.0';
+
+  C_ClassAnnotationsNodeTreeIdx = 0;
+  C_ClassVariableNodeTreeIdx = 1;
+  C_ClassPropertyNodeTreeIdx = 2;
+  C_ClassMethodNodeTreeIdx = 3;
 
 procedure TFrmUnitBrowserMain.AcceptFiles( var msg : TMessage );
 const
@@ -109,40 +118,143 @@ begin
 end;
 
 procedure TFrmUnitBrowserMain.RefreshTree;
-var
-  i, c: integer;
-  j: integer;
-  li: TTreeNode;
-  subli: TTreeNode;
-  propdef: TPropertyDefinition;
-  vardef: TVariableDefinition;
-  methoddef: TMethodDefinition;
-  s: string;
 begin
-  s := 'global';
-  li := treeMain.Items.AddChild(nil, s);
-  treeMain.Items.AddChild(li,'Variables');
-  treeMain.Items.AddChild(li,'Properties');
-  treeMain.Items.AddChild(li,'Methods');
-  FClassNodeList.AddObject( s, li );
+  AddClassNode('global', nil);
+  AddClassesToTree(FParser.InterfaceClassList);
 
-  c := FParser.InterfaceClassList.Count - 1;
+  AddVariablesToTree(FParser.VariableList);
+  AddPropertiesToTree(FParser.PropertyList);
+
+  AddMethodsToTree(FParser.MethodList);
+  AddMethodsToTree(FParser.InterfaceMethodList);
+
+  treeMain.FullExpand;
+end;
+
+function TFrmUnitBrowserMain.AddClassNode(const AClassNodeName: string; const AClassDef: TClassDefinition): TTreeNode;
+var
+  Annotation: string;
+begin
+  Result := treeMain.Items.AddChild(nil, AClassNodeName);
+  treeMain.Items.AddChild(Result, 'Annotations');
+  treeMain.Items.AddChild(Result, 'Variables');
+  treeMain.Items.AddChild(Result, 'Properties');
+  treeMain.Items.AddChild(Result, 'Methods');
+  FClassNodeList.AddObject(AClassNodeName, Result);
+
+  if Assigned(AClassDef) then
+  begin
+    for Annotation in AClassDef.Annotations do
+    begin
+      treeMain.Items.AddChild(Result.Item[C_ClassAnnotationsNodeTreeIdx], Annotation);
+    end;
+  end;
+end;
+
+procedure TFrmUnitBrowserMain.AddClassesToTree(const AClasses: TStrings);
+var
+  i, c: Integer;
+  ClassNodeName: string;
+  li: TTreeNode;
+begin
+  c := AClasses.Count - 1;
   for i := 0 to c do
   begin
-    s := FParser.InterfaceClassList.Names[i];
-    li := treeMain.Items.AddChild(nil, s);
+    ClassNodeName := AClasses.Names[i];
 
-    treeMain.Items.AddChild(li,'Variables');
-    treeMain.Items.AddChild(li,'Properties');
-    treeMain.Items.AddChild(li,'Methods');
+    AddClassNode(ClassNodeName, TClassDefinition(AClasses.Objects[i]));
+  end;
+end;
 
-    FClassNodeList.AddObject( s, li );
+procedure TFrmUnitBrowserMain.AddMethodsToTree(const AMethods: TObjectList);
+var
+  i, c: Integer;
+begin
+  c := AMethods.Count - 1;
+  for i := 0 to c do
+  begin
+    AddMethodToTree(TMethodDefinition(AMethods[i]));
+  end;
+end;
+
+procedure TFrmUnitBrowserMain.AddMethodToTree(const methoddef: TMethodDefinition);
+var
+  ClassIdx: Integer;
+  ClassNodeName: string;
+  ClassNode, MethodNode: TTreeNode;
+  Annotations: string;
+  Annotation: string;
+begin
+  if methoddef.InClass <> '' then
+  begin
+    ClassIdx := FClassNodeList.IndexOf(methoddef.InClass);
+    if ClassIdx <> -1 then
+    begin
+      ClassNode := TTreeNode(FClassNodeList.Objects[ClassIdx]);
+    end
+    else
+    begin
+      ClassNodeName := methoddef.InClass;
+      ClassNode := AddClassNode(ClassNodeName, nil);
+    end;
+  end
+  else
+  begin
+    ClassNode := TTreeNode(FClassNodeList.Objects[0]);
   end;
 
-  c := FParser.VariableList.Count - 1;
+  MethodNode := ClassNode.Item[C_ClassMethodNodeTreeIdx];
+
+  Annotations := '';
+  for Annotation in methoddef.Annotations do
+  begin
+    Annotations := Annotations + '[' + Annotation + ']';
+  end;
+
+  treeMain.Items.AddChild(MethodNode, methoddef.DefMethodName + '(' + methoddef.ParamsAndTypes + '): ' + methoddef.Functype + Trim(' ' + Annotations));
+end;
+
+procedure TFrmUnitBrowserMain.AddPropertiesToTree(const AProperties: TObjectList);
+var
+  i, c: Integer;
+  propdef: TPropertyDefinition;
+  li: TTreeNode;
+  j: Integer;
+  subli: TTreeNode;
+begin
+  c := AProperties.Count - 1;
   for i := 0 to c do
   begin
-    vardef := TVariableDefinition(FParser.VariableList[i]);
+    propdef := TPropertyDefinition(AProperties[i]);
+
+    if propdef.InClass <> '' then
+    begin
+      j := FClassNodeList.IndexOf(propdef.InClass);
+      li := TTreeNode(FClassNodeList.Objects[j]);
+    end
+    else
+    begin
+      li := TTreeNode(FClassNodeList.Objects[0]);
+    end;
+
+    subli := li.Item[C_ClassPropertyNodeTreeIdx];
+
+    treeMain.Items.AddChild(subli, propdef.PropertyName + ': ' + propdef.PropertyType);
+  end;
+end;
+
+procedure TFrmUnitBrowserMain.AddVariablesToTree(const AVariables: TObjectList);
+var
+  i, c: integer;
+  li: TTreeNode;
+  j: Integer;
+  vardef: TVariableDefinition;
+  subli: TTreeNode;
+begin
+  c := AVariables.Count - 1;
+  for i := 0 to c do
+  begin
+    vardef := TVariableDefinition(AVariables[i]);
 
     if vardef.InClass <> '' then
     begin
@@ -161,63 +273,10 @@ begin
       li := TTreeNode(FClassNodeList.Objects[0]);
     end;
 
-    subli := li.Item[0];
+    subli := li.Item[C_ClassVariableNodeTreeIdx];
 
     treeMain.Items.AddChild(subli, vardef.PropertyName + ': ' + vardef.PropertyType);
   end;
-
-  c := FParser.PropertyList.Count - 1;
-  for i := 0 to c do
-  begin
-    propdef := TPropertyDefinition(FParser.PropertyList[i]);
-
-    if propdef.InClass <> '' then
-    begin
-      j := FClassNodeList.IndexOf(propdef.InClass);
-      li := TTreeNode(FClassNodeList.Objects[j]);
-    end
-    else
-    begin
-      li := TTreeNode(FClassNodeList.Objects[0]);
-    end;
-
-    subli := li.Item[1];
-
-    treeMain.Items.AddChild(subli, propdef.PropertyName + ': ' + propdef.PropertyType);
-  end;
-
-  c := FParser.MethodList.Count - 1;
-  for i := 0 to c do
-  begin
-    methoddef := TMethodDefinition(FParser.MethodList[i]);
-
-    if methoddef.InClass <> '' then
-    begin
-      j := FClassNodeList.IndexOf(methoddef.InClass);
-      if j <> -1 then
-      begin
-        li := TTreeNode(FClassNodeList.Objects[j]);
-      end
-      else
-      begin
-        s := methoddef.InClass;
-        li := treeMain.Items.AddChild(nil, s);
-        treeMain.Items.AddChild(li,'Variables');
-        treeMain.Items.AddChild(li,'Properties');
-        treeMain.Items.AddChild(li,'Methods');
-        FClassNodeList.AddObject( s, li );
-      end;
-    end
-    else
-    begin
-      li := TTreeNode(FClassNodeList.Objects[0]);
-    end;
-
-    subli := li.Item[2];
-    treeMain.Items.AddChild(subli, methoddef.DefMethodName + '(' + methoddef.ParamsAndTypes + '): ' + methoddef.Functype);
-  end;
-
-  treeMain.FullExpand;
 end;
 
 end.
