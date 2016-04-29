@@ -134,11 +134,15 @@ begin
 
   FSearchPath := TStringList.Create;
   FSearchPath.Delimiter := ';';
+  {$ifndef VER150}
   FSearchPath.StrictDelimiter := True;
+  {$endif}
 
   FBRCC_IncludePath := TStringList.Create;
   FBRCC_IncludePath.Delimiter := ';';
+  {$ifndef VER150}
   FBRCC_IncludePath.StrictDelimiter := True;
+  {$endif}
 
   FBRCC_OutputDir := TStringList.Create;
   FBRCC_OutputDir.Delimiter := ';';

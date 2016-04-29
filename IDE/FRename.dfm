@@ -35,7 +35,6 @@ object frmRename: TfrmRename
       Anchors = [akTop, akRight]
       Caption = 'Save'
       Default = True
-      ImageIndex = 1
       ModalResult = 1
       TabOrder = 0
     end
@@ -47,7 +46,6 @@ object frmRename: TfrmRename
       Anchors = [akTop, akRight]
       Cancel = True
       Caption = 'Cancel'
-      ImageIndex = 0
       ModalResult = 2
       TabOrder = 1
     end

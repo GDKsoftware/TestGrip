@@ -11,10 +11,10 @@ type
 
   TCommonAppFunctions = class
   public
-    class function GetAppPath: string; inline;
+    class function GetAppPath: string;
     class function GetAllEnvVars(const Vars: TStrings): Integer;
     class function GetUniqueID: string;
-    class function GetAppDataFolder: string; inline;
+    class function GetAppDataFolder: string;
     class function GetSpecialWindowsFolder(aCSIDL: integer): string;
 
     class function HasAppParam(const s: string): boolean;
@@ -29,9 +29,9 @@ type
     class function CountLines(const s: TStream; iTypeOfLF: TLFType; iMaxLen: integer): integer; overload;
     class function CountLines(const s: string; iTypeOfLF: TLFType = lfDos; iMaxLen: integer = -1): integer; overload;
 
-    class function RemoveDoubleQuotes(const s: string): string; inline;
+    class function RemoveDoubleQuotes(const s: string): string;
 
-    class function IsNumeric( const s: string ): boolean; inline;
+    class function IsNumeric( const s: string ): boolean;
 
     class function OnlyNormalChars(const Key: Char): Char;
 
@@ -81,14 +81,23 @@ type
   end;
 
 
+
+
+  {$ifdef VER150}
+    {$define NEEDCHARINCSET}
+  {$endif}
   {$ifdef VER180}
+    {$define NEEDCHARINCSET}
+  {$endif}
+
+  {$ifdef NEEDCHARINCSET}
   function CharInSet(const AChar: Char; const ACharSet: TCharSet): Boolean;
   {$endif}
 
 implementation
 
 uses
-  SysUtils, Windows, Forms, ShellApi, SHFolder;
+  SysUtils, Windows, Forms, ShellApi, SHFolder, uD7Functions;
 
 const
   c_base64table = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -516,7 +525,7 @@ begin
 end;
 
 
-{$ifdef VER180}
+{$ifdef NEEDCHARINCSET}
 function CharInSet(const AChar: Char; const ACharSet: TCharSet): Boolean;
 begin
   Result := AChar in ACharSet;

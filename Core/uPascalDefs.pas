@@ -131,7 +131,7 @@ implementation
 
 uses
   StrUtils,
-  SysUtils, uCommonFunctions;
+  SysUtils, uCommonFunctions, uD7Functions;
 
 //  uCommonFunctions;
 

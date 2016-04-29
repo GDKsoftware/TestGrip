@@ -23,7 +23,7 @@ type
 implementation
 
 uses
-  Contnrs, StrUtils, SysUtils, uPascalDefs, uCommonFunctions, Variants;
+  Contnrs, StrUtils, SysUtils, uPascalDefs, uCommonFunctions, Variants, uD7Functions;
 
 
 { TDUnitTestClassFileGen }

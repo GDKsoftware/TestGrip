@@ -104,7 +104,7 @@ type
   function GetFirstMethodDefinitionFromSourceByName( const sPascalFile: string; const sMethodName: string; const sClassName: string; bIncludeLineNumer: boolean = False ): TMethodDefinition;
   function GetFirstMethodDefinitionFromSourceBySignature( const sPascalFile: string; const sSignature: string; bIncludeLineNumer: boolean = False ): TMethodDefinition;
 
-  function IsValidPascalIdentifier(const sIdent: string): boolean; inline;
+  function IsValidPascalIdentifier(const sIdent: string): boolean;
 
 implementation
 
@@ -114,7 +114,11 @@ uses
 
 function IsValidPascalIdentifier(const sIdent: string): boolean;
 begin
+  {$ifdef VER150}
+  Result := IsValidIdent(sIdent);
+  {$else}
   Result := IsValidIdent(sIdent, false);
+  {$endif}
 end;
 
 

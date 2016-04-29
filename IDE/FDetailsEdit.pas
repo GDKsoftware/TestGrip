@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, StdCtrls, ActnList, ActnMan,
-  ImgList, XPStyleActnCtrls, System.ImageList, System.Actions;
+  ImgList, XPStyleActnCtrls;
 
 type
   TfrmDetailsEdit = class(TForm)

@@ -34,7 +34,7 @@ type
 implementation
 
 uses
-  StrUtils, SysUtils, Variants;
+  StrUtils, SysUtils, Variants, uD7Functions;
 
 { TDUnitXTestClassFileGen }
 

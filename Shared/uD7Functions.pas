@@ -25,6 +25,15 @@ function AnsiStartsStr(const ASubText, AText: string): Boolean;
 function SameStr(const S1, S2: string): Boolean;
 function ContainsStr(const AText, ASubText: string): Boolean;
 function AnsiContainsStr(const AText, ASubText: string): Boolean;
+
+type
+  ENotSupportedException = class(Exception);
+
+{$endif}
+
+{$ifdef VER180}
+type
+  ENotSupportedException = class(Exception);
 {$endif}
 
 implementation

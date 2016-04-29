@@ -4,12 +4,12 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DockForm, StdCtrls, UITypes, Types,
+  Dialogs, DockForm, StdCtrls, Types,
   Menus, Grids, DBGrids, ComCtrls, ExtCtrls, uIdeEditorManager,uPascalDefs, uTestDefs,
   ActnList, ActnMan, ToolWin, ActnCtrls,
   ActnMenus, ImgList, XPStyleActnCtrls, GDCVirtualTrees, Buttons, ToolsApi,uTestGen, FMultitestEdit, XPMan,
   FShowTestResults, FInputTest, Contnrs, uProjectParser, uBuildOutputParser, uUnitParser,
-  uDefinitionSearch, System.Actions, System.ImageList;
+  uDefinitionSearch;
 
 var
   NotifierIndex: Integer;
@@ -1460,14 +1460,14 @@ begin
     end;
   {$else}
     {$ifdef VER180}
-      c := proj.GetModuleCount - 1;
+      c := AProject.GetModuleCount - 1;
       for i := 0 to c do
       begin
         AFiles.Add(AProject.GetModule(i).FileName);
       end;
     {$else}
       {$ifdef VER150}
-        c := proj.GetModuleCount - 1;
+        c := AProject.GetModuleCount - 1;
         for i := 0 to c do
         begin
           AFiles.Add(AProject.GetModule(i).FileName);

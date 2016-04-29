@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, StdCtrls, ExtCtrls, ImgList,
-  ActnList, XPStyleActnCtrls, ActnMan, System.Actions, System.ImageList;
+  ActnList, XPStyleActnCtrls, ActnMan;
 
 type
   TfrmRename = class(TForm)

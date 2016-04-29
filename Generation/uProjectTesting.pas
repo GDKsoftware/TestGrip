@@ -54,7 +54,7 @@ type
 implementation
 
 uses
-  StrUtils;
+  StrUtils, uD7Functions;
 
 { TProjectTesting }
 

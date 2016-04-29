@@ -7,7 +7,7 @@ uses
   Dialogs, StdCtrls, ComCtrls, ExtCtrls, Grids, uPascalDefs, uTestDefs,
   ActnList,  ActnMan, ToolWin, ImgList, Contnrs,
   FDetailsEdit, XPStyleActnCtrls,
-  uUnitParser, System.Actions, ImageList;
+  uUnitParser;
 
 type
   TfrmTestsMatrixEdit = class(TForm)
