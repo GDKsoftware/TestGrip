@@ -1164,16 +1164,17 @@ begin
         if bInClassTypeDeclaration then
         begin
           bInClassTypeDeclaration := False;
-        
+
+          TempIdx := FInterfaceClassList.IndexOfName(sCurrentClass);
+          if Assigned(FInterfaceClassList.Objects[TempIdx]) then
+          begin
+            TClassDefinition(FInterfaceClassList.Objects[TempIdx]).Reparse(sTempLine);
+          end;
+
           sTempLine := ExtractParentClassFromDefinition( sTempLine );
           if sTempLine <> '' then
           begin
-            TempIdx := FInterfaceClassList.IndexOfName(sCurrentClass);
-            FInterfaceClassList.ValueFromIndex[TempIdx] := sTempLine;
-            if Assigned(FInterfaceClassList.Objects[TempIdx]) then
-            begin
-              TClassDefinition(FInterfaceClassList.Objects[TempIdx]).Reparse(sTempLine);
-            end;
+            FInterfaceClassList.Values[sCurrentClass] := sTempLine;
           end;
         end
         else if bInMethod then
