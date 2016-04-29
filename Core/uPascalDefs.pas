@@ -52,6 +52,8 @@ type
 
     FScope: TClassScope;
 
+    FAnnotations: TStrings;
+
     procedure ParseRawMethodString;
     procedure ParseRawParamDefinition;
 
@@ -73,6 +75,8 @@ type
       read FParamTypes;
     property ParamDefaultValues: TStrings
       read FParamDefaultValues;
+    property Annotations: TStrings
+      read FAnnotations;
 
     property RawParamDefinition: string
       read FRawParamDefinition write FRawParamDefinition;
@@ -105,6 +109,10 @@ type
     FName: string;
     FIsInterface: boolean;
 
+    // FInterfaceGUID: string;
+    // FInterfaceParents: string;
+    FAnnotations: TStrings;
+
     /// <summary>parse all inherited class/interface names into the FInherits list</summary>
     procedure ParseInheritDef(const s: string);
 
@@ -119,11 +127,17 @@ type
       read FIsInterface;
     property Inherits: TStrings
       read FInherits;
+    property Annotations: TStrings
+      read FAnnotations;
 
+    constructor Create(const ADefinition: TClassDefinition); overload;
     constructor Create(const sRawDefinition: string); overload;
     destructor Destroy; override;
-  end;
 
+    procedure Reparse(const sRawDefinition: string);
+
+    function HasAnnotation(const AAnnotation: string): Boolean;
+  end;
 
   function DetermineClassSigniture(const s: string; bIncludeClassname: boolean = True): string;
 
@@ -148,10 +162,12 @@ begin
   FParameters := TStringList.Create;
   FParamTypes := TStringList.Create;
   FParamDefaultValues := TStringList.Create;
+  FAnnotations := TStringList.Create;
 end;
 
 procedure TMethodDefinition.Clear;
 begin
+  FAnnotations.Clear;
   FParameters.Clear;
   FParamTypes.Clear;
   FParamDefaultValues.Clear;
@@ -174,6 +190,7 @@ begin
   FParameters := TStringList.Create;
   FParamTypes := TStringList.Create;
   FParamDefaultValues := TStringList.Create;
+  FAnnotations := TStringList.Create;
 
   if bIsSignature then
   begin
@@ -192,6 +209,7 @@ begin
   FParameters := TStringList.Create;
   FParamTypes := TStringList.Create;
   FParamDefaultValues := TStringList.Create;
+  FAnnotations := TStringList.Create;
 
   if Assigned(aSourceMDef) then
   begin
@@ -201,6 +219,7 @@ begin
     FParamDefaultValues.AddStrings(aSourceMDef.FParamDefaultValues);
     FParameters.AddStrings(aSourceMDef.FParameters);
     FParamTypes.AddStrings(aSourceMDef.FParamTypes);
+    FAnnotations.AddStrings(aSourceMDef.FAnnotations);
 
     FInClass := aSourceMDef.FInClass;
     FDefMethodName := aSourceMDef.FDefMethodName;
@@ -214,6 +233,7 @@ begin
   FreeAndNil(FParamDefaultValues);
   FreeAndNil(FParamTypes);
   FreeAndNil(FParameters);
+  FreeAndNil(FAnnotations);
 
   inherited;
 end;
@@ -810,15 +830,51 @@ end;
 
 constructor TClassDefinition.Create(const sRawDefinition: string);
 begin
+  inherited Create;
+
   FRawDefinition := '';
   FInherits := TStringList.Create;
+  FAnnotations := TStringList.Create;
 
   Parse(sRawDefinition);
+end;
+
+constructor TClassDefinition.Create(const ADefinition: TClassDefinition);
+begin
+  inherited Create;
+
+  FInherits := TStringList.Create;
+  FAnnotations := TStringList.Create;
+
+  FRawDefinition := ADefinition.FRawDefinition;
+  FIsInterface := ADefinition.IsInterface;
+  FName := ADefinition.FName;
+
+  FInherits.AddStrings(ADefinition.FInherits);
+  FAnnotations.AddStrings(ADefinition.FAnnotations);
 end;
 
 destructor TClassDefinition.Destroy;
 begin
   FreeAndNil(FInherits);
+  FreeAndNil(FAnnotations);
+end;
+
+function TClassDefinition.HasAnnotation(const AAnnotation: string): Boolean;
+var
+  I, C: Integer;
+begin
+  Result := False;
+
+  C := FAnnotations.Count - 1;
+  for I := 0 to C do
+  begin
+    if SameText(AAnnotation, FAnnotations[I]) then
+    begin
+      Result := True;
+      Exit;
+    end;
+  end;
 end;
 
 procedure TClassDefinition.Parse(const sRawDefinition: string);
@@ -965,6 +1021,11 @@ begin
   begin
     FInherits.Add(sTemp);
   end;
+end;
+
+procedure TClassDefinition.Reparse(const sRawDefinition: string);
+begin
+  Parse(sRawDefinition);
 end;
 
 procedure TClassDefinition.SetType(const s: string);

@@ -21,6 +21,9 @@
         <Projects Include="Apps\ImpGen\impgen.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Apps\XDataAPIDocGen\XDataAPIDocGen.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -83,14 +86,23 @@
     <Target Name="impgen:Make">
         <MSBuild Projects="Apps\ImpGen\impgen.dproj" Targets="Make"/>
     </Target>
+    <Target Name="XDataAPIDocGen">
+        <MSBuild Projects="Apps\XDataAPIDocGen\XDataAPIDocGen.dproj"/>
+    </Target>
+    <Target Name="XDataAPIDocGen:Clean">
+        <MSBuild Projects="Apps\XDataAPIDocGen\XDataAPIDocGen.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="XDataAPIDocGen:Make">
+        <MSBuild Projects="Apps\XDataAPIDocGen\XDataAPIDocGen.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="TestgripProjectTester_DXE10;TestIDE;IntegratedUnitTest_DXE10;UnitBrowser;UnitSearch;impgen"/>
+        <CallTarget Targets="TestgripProjectTester_DXE10;TestIDE;IntegratedUnitTest_DXE10;UnitBrowser;UnitSearch;impgen;XDataAPIDocGen"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TestgripProjectTester_DXE10:Clean;TestIDE:Clean;IntegratedUnitTest_DXE10:Clean;UnitBrowser:Clean;UnitSearch:Clean;impgen:Clean"/>
+        <CallTarget Targets="TestgripProjectTester_DXE10:Clean;TestIDE:Clean;IntegratedUnitTest_DXE10:Clean;UnitBrowser:Clean;UnitSearch:Clean;impgen:Clean;XDataAPIDocGen:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TestgripProjectTester_DXE10:Make;TestIDE:Make;IntegratedUnitTest_DXE10:Make;UnitBrowser:Make;UnitSearch:Make;impgen:Make"/>
+        <CallTarget Targets="TestgripProjectTester_DXE10:Make;TestIDE:Make;IntegratedUnitTest_DXE10:Make;UnitBrowser:Make;UnitSearch:Make;impgen:Make;XDataAPIDocGen:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

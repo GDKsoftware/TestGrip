@@ -6,8 +6,6 @@ uses
   Classes, Contnrs, uPascalDefs;
 
 type
-
-
   TUnitParser = class
   protected
     FRawOuterUsesList: TStrings;
@@ -611,6 +609,7 @@ var
   bInUses1: boolean;
   bInUses2: boolean;
   bInClassTypeDeclaration: boolean;
+  bInAnnotation: boolean;
   sCurrentKeyWord: ansistring;
   sPreviousKeyWord: ansistring;
   sHelperWord: ansistring;
@@ -641,6 +640,10 @@ var
   iLinesInBlock: integer;
   aScope: TClassScope;
   bInInterfaceClass: boolean;
+  CurrentAnnotation: string;
+  CurrentAnnotations: TStringList;
+  CurrentClassDef: TClassDefinition;
+  TempIdx: Integer;
 begin
   iTotalBytesDone := 0;
   sHelperWord := '';
@@ -675,9 +678,12 @@ begin
   bMethodBracketOpen := False;
   iInGenericTypes := 0;
   bInInterfaceClass := True;
+  bInAnnotation := False;
 
   iLineNumberOffset := 0;
   iLinesInBlock := 0;
+
+  CurrentAnnotations := TStringList.Create;
 
   FOuterUsesList.Clear;
   FInnerUsesList.Clear;
@@ -783,6 +789,36 @@ begin
         sCurrentKeyWord := '';
         bInParenthesisComment := True;
       end
+      else if not bInImplementation and not bInAnnotation and not bInVar and (ch = '[') then
+      begin
+        bInAnnotation := True;
+        CurrentAnnotation := '';
+        sTempLine := '';
+      end
+      else if bInAnnotation and (ch = ']') then
+      begin
+        bInAnnotation := False;
+        if CurrentAnnotation <> '' then
+        begin
+          CurrentAnnotations.Add(CurrentAnnotation);
+        end
+        else if Assigned(CurrentClassDef) then
+        begin
+          sTempLine := Copy(sTempLine, 1, Length(sTempLine) - 1);
+          CurrentClassDef.Annotations.Add(sTempLine);
+        end;
+        CurrentAnnotation := '';
+        sTempLine := '';
+      end
+      else if bInAnnotation and ((CurrentAnnotation = '') or StartsStr('''', CurrentAnnotation)) and (ch = '''') then
+      begin
+        // is begin/end of GUID
+      end
+      else if bInAnnotation then
+      begin
+        CurrentAnnotation := CurrentAnnotation + ch;
+        sTempLine := '';
+      end
       else if ch = '=' then
       begin
         // check if this is an = without whitespace inbetween typename
@@ -819,6 +855,8 @@ begin
         else if SameText(sCurrentKeyWord, 'end') then
         begin
           // end of ... anything
+          CurrentAnnotations.Clear;
+          bInAnnotation := False;
 
           bInPrivate := False;
           bInProtected := False;
@@ -884,6 +922,7 @@ begin
               try
                 // classname is not inline here, so we get it from the currentclass var
                 mdef.InClass := sCurrentClass;
+                mdef.Annotations.AddStrings(CurrentAnnotations);
 
                 if bInInterfaceClass then
                 begin
@@ -895,6 +934,9 @@ begin
                 mdef.Free;
               end;
             end;
+
+            CurrentAnnotations.Clear;
+            bInAnnotation := False;
           end
 
         end;
@@ -933,7 +975,11 @@ begin
 
             sCurrentClass := DetermineClassSigniture(sTypeName);
 
-            InterfaceClassList.Add( sCurrentClass + '=' + '' );
+            CurrentClassDef := TClassDefinition.Create(sCurrentClass+' = class');
+            CurrentClassDef.Annotations.AddStrings(CurrentAnnotations);
+            CurrentAnnotations.Clear;
+
+            FInterfaceClassList.AddObject(sCurrentClass + '=' + '', CurrentClassDef);
           end;
 
           sTypeName := '';
@@ -942,20 +988,31 @@ begin
         begin
           if bInType then
           begin
+            bInClassTypeDeclaration := True;
+
             sTempLine := Trim(sTempLine);
             sCurrentClass := Trim(TKeyValueFunctions.GetKey(sTempLine));
-            InterfaceClassList.Add( sCurrentClass + '=' + '' );
+
+            CurrentClassDef := TClassDefinition.Create(sCurrentClass+' = interface');
+            CurrentClassDef.Annotations.AddStrings(CurrentAnnotations);
+            CurrentAnnotations.Clear;
+
+            FInterfaceClassList.AddObject(sCurrentClass + '=' + '', CurrentClassDef);
+
             bInInterfaceClass := True;
           end;
 
           bInInterface := True;
-          sTempLine := '';
+//          sTempLine := '';
         end
         else if SameText(sCurrentKeyWord, 'implementation') then
         begin
           bInInterface := False;
           bInImplementation := True;
           bInType := True;
+
+          CurrentAnnotations.Clear;
+          bInAnnotation := False;
 
           if bGetLineNumbers then
           begin
@@ -1111,11 +1168,17 @@ begin
         if bInClassTypeDeclaration then
         begin
           bInClassTypeDeclaration := False;
-        
+
+          TempIdx := FInterfaceClassList.IndexOfName(sCurrentClass);
+          if Assigned(FInterfaceClassList.Objects[TempIdx]) then
+          begin
+            TClassDefinition(FInterfaceClassList.Objects[TempIdx]).Reparse(sTempLine);
+          end;
+
           sTempLine := ExtractParentClassFromDefinition( sTempLine );
           if sTempLine <> '' then
           begin
-            InterfaceClassList.Values[sCurrentClass] := sTempLine;
+            FInterfaceClassList.Values[sCurrentClass] := sTempLine;
           end;
         end
         else if bInMethod then
@@ -1146,6 +1209,8 @@ begin
     end;
 
   end;
+
+  CurrentAnnotations.Free;
 
   FRawOuterUsesList.Text := sUsesList1;
   FRawInnerUsesList.Text := sUsesList2;
