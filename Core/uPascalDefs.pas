@@ -130,10 +130,13 @@ type
     property Annotations: TStrings
       read FAnnotations;
 
+    constructor Create(const ADefinition: TClassDefinition); overload;
     constructor Create(const sRawDefinition: string); overload;
     destructor Destroy; override;
 
     procedure Reparse(const sRawDefinition: string);
+
+    function HasAnnotation(const AAnnotation: string): Boolean;
   end;
 
   function DetermineClassSigniture(const s: string; bIncludeClassname: boolean = True): string;
@@ -836,10 +839,42 @@ begin
   Parse(sRawDefinition);
 end;
 
+constructor TClassDefinition.Create(const ADefinition: TClassDefinition);
+begin
+  inherited Create;
+
+  FInherits := TStringList.Create;
+  FAnnotations := TStringList.Create;
+
+  FRawDefinition := ADefinition.FRawDefinition;
+  FIsInterface := ADefinition.IsInterface;
+  FName := ADefinition.FName;
+
+  FInherits.AddStrings(ADefinition.FInherits);
+  FAnnotations.AddStrings(ADefinition.FAnnotations);
+end;
+
 destructor TClassDefinition.Destroy;
 begin
   FreeAndNil(FInherits);
   FreeAndNil(FAnnotations);
+end;
+
+function TClassDefinition.HasAnnotation(const AAnnotation: string): Boolean;
+var
+  I, C: Integer;
+begin
+  Result := False;
+
+  C := FAnnotations.Count - 1;
+  for I := 0 to C do
+  begin
+    if SameText(AAnnotation, FAnnotations[I]) then
+    begin
+      Result := True;
+      Exit;
+    end;
+  end;
 end;
 
 procedure TClassDefinition.Parse(const sRawDefinition: string);
