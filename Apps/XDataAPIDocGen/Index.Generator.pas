@@ -39,6 +39,8 @@ begin
 
   FLinks := TStringList.Create;
   FTargetFolder := ATargetFolder;
+
+  FDirectXSLLink := 'index.xsl';
 end;
 
 destructor TIndexGenerator.Destroy;
