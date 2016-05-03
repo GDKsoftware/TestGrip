@@ -39,8 +39,21 @@ uses
 { TDUnitXTestClassFileGen }
 
 function TDUnitXTestClassFileGen.GenerateTemplate: string;
+var
+  sTypeDef: string;
+  sImplementation: string;
 begin
+  FOuterUses.Add('DUnitX.TestFramework');
+
   Result := inherited GenerateTemplate;
+
+  // TypeDefs -> class
+  sTypeDef := GenerateTestInterfaceSection;
+  sImplementation := GenerateTestImplementationSection;
+
+  // fill in template
+  Result := ReplaceText( Result, '<TypeDefs>', sTypeDef );
+  Result := ReplaceText( Result, '<Implementation>', sImplementation );
 end;
 
 procedure TDUnitXTestClassFileGen.GenerateTest(const AClass: TInputTestClass; const AFunction: TInputFunction;
@@ -56,13 +69,15 @@ var
   Parameter: TInputParam;
   sCall: string;
   sTestResultVar: string;
+  CurrentTestMethodName: string;
 begin
   ComposedTestFunction := TUnitTestFunctionGen.Create;
   FTests.Add(ComposedTestFunction);
 
   TestIdx := FTests.Count;
 
-  ComposedTestFunction.Def := 'procedure Test_' + AFunction.MethodName + IntToStr(TestIdx);
+  CurrentTestMethodName := 'Test_' + AFunction.MethodName + IntToStr(TestIdx);
+  ComposedTestFunction.Def := 'procedure ' + CurrentTestMethodName;
 
   ReturnType := GetReturnType(lstFunctionRef, AFunction);
   if ReturnType <> '' then
@@ -71,7 +86,7 @@ begin
   IsProcedure := SameStr(ReturnType, 'void');
 
   ComposedTestFunction.Imp :=
-    'procedure ' + FUnitTestClassName + '.Test_' + IntToStr(TestIdx) + ';' + #13#10 +
+    'procedure ' + FUnitTestClassName + '.' + CurrentTestMethodName + ';' + #13#10 +
     'var'#13#10 +
     '  TestObj: ' + sTestClassName + ';' + #13#10;
 
@@ -113,7 +128,7 @@ begin
   AddCustomInitializationCode(ComposedTestFunction, AFunction, sTestClassName, AClass, ATest);
 
   ComposedTestFunction.Imp := ComposedTestFunction.Imp +
-    '  Check(TestObj <> nil, ''TestObj has not been created yet'');' + #13#10;
+    '  Assert.IsNotNull(TestObj, ''TestObj has not been created yet'');' + #13#10;
 
   ComposedTestFunction.Imp := ComposedTestFunction.Imp +
   '  try' + #13#10;
@@ -151,19 +166,8 @@ begin
 end;
 
 function TDUnitXTestClassFileGen.GetTemplateCode: string;
-var
-  sTypeDef: string;
-  sImplementation: string;
 begin
   Result := GenerateTemplate;
-
-  // TypeDefs -> class
-  sTypeDef := GenerateTestInterfaceSection;
-  sImplementation := GenerateTestImplementationSection;
-
-  // fill in template
-  Result := ReplaceText( Result, '<TypeDefs>', sTypeDef );
-  Result := ReplaceText( Result, '<Implementation>', sImplementation );
 end;
 
 procedure TDUnitXTestClassFileGen.AddImpliesChecks(const ComposedTestFunction: TUnitTestFunctionGen; const ATest: TInputTest);

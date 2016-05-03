@@ -11,16 +11,12 @@ type
 
   TTestGenProgressFunc = procedure( const Sender: TTestGen; currentstep: integer; maxsteps: integer; const sShortDesc: string ) of object;
 
-  TTestFrameWork = (tfwDUnit = 0, tfwDUnitX = 1);
-
   { TTestGen }
   TTestGen = class(TObject)
-  private
-    procedure InitSetupCode(const aClass: TInputTestClass; const aFunctionToTest: TInputFunction);
-    procedure InitProjectUsesAndRequires(const sProjectFile: string);
   protected
     FProjectPath: string;
     FTestResultPath: string;
+    FUnitTestClassName: string;
 
     FUseTestFrameWork: TTestFrameWork;
     FInheritedGen: TInheritGen;
@@ -40,6 +36,10 @@ type
     FSetupCode: string;
 
     FDisableExceptionLib: boolean;
+
+    procedure InitSetupCode(const aClass: TInputTestClass; const aFunctionToTest: TInputFunction);
+    procedure InitProjectUsesAndRequires(const sProjectFile: string);
+    procedure SetUseTestFrameWork(const Value: TTestFrameWork);
 
     procedure SetProjectPath( const s: string );
     procedure SetSetupCode(const aFunctionToTest: TInputFunction);
@@ -61,6 +61,8 @@ type
       read FProjectPath write SetProjectPath;
     property ProjectGen: TProjectGen
       read FProjectGen;
+    property UnitTestClassName: string
+      read FUnitTestClassName write FUnitTestClassName;
     property OnProgress: TTestGenProgressFunc
       read FProgressFunc write FProgressFunc;
     property TotalTestTime: string
@@ -75,7 +77,7 @@ type
       read FInheritedTestFile;
 
     property UseTestFrameWork: TTestFrameWork
-      read FUseTestFrameWork write FUseTestFrameWork;
+      read FUseTestFrameWork write SetUseTestFrameWork;
 
     constructor Create;
     destructor Destroy; override;
@@ -105,6 +107,8 @@ constructor TTestGen.Create;
 var
   sTimeStr: string;
 begin
+  inherited Create;
+
   FProjectParser := nil;
 
   FProgressFunc := nil;
@@ -126,6 +130,9 @@ begin
   sTimeStr := FormatDateTime('mmddhhnnss',Now);
   FInheritedTestFile := c_inhfileprefix + sTimeStr + '.pas';
   FTestUnitFile := c_unitfileprefix + sTimeStr + '.pas';
+
+  FUseTestFrameWork := tfwDUnit;
+  FUnitTestClassName := c_inhclassname;
 end;
 
 function TTestGen.GetTestCode( const sUnit: string; const aClass: TInputTestClass; const aFunctionToTest: TInputFunction ): string;
@@ -148,6 +155,14 @@ begin
     else if assigned(aFunctionToTest.Parent) and aFunctionToTest.Parent.UseCustomSetupCode then
       FSetupCode := aFunctionToTest.Parent.CustomSetupCode;
   end;
+end;
+
+procedure TTestGen.SetUseTestFrameWork(const Value: TTestFrameWork);
+begin
+  FUseTestFrameWork := Value;
+
+  if Assigned(FProjectGen) then
+    FProjectGen.UseTestFramework := Value;
 end;
 
 procedure TTestGen.DeleteTestProjectFiles;
@@ -289,7 +304,7 @@ begin
     end
     else
     begin
-      sPrefix := '] ' + c_inhclassname + '.Test_';
+      sPrefix := '] ' + FUnitTestClassName + '.Test_';
       p1 := Pos(sPrefix, sLine);
       if p1 <> 0 then
       begin
@@ -507,6 +522,18 @@ begin
   begin
     FUnitTestGen := TDUnitXTestClassFileGen.Create;
   end;
+
+  Assert(Assigned(FUnitTestGen), 'Unknown TestFramework selected');
+
+  if Assigned(aClass) and (aClass.ClassName <> '') then
+  begin
+    FUnitTestClassName := aClass.ClassName + 'Test';
+
+    if not StartsText('T', FUnitTestClassName) then
+      FUnitTestClassName := 'T' + FUnitTestClassName;
+  end;
+
+  FUnitTestGen.UnitTestClassName := FUnitTestClassName;
 
   // if the inherited unit uses utf8, we should probably use it too
   if Assigned(FInheritedGen) then

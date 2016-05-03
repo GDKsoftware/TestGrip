@@ -45,7 +45,6 @@ object GDC_frmPropertyEditor: TGDC_frmPropertyEditor
         Left = 0
         Top = 0
         Width = 233
-        Height = 36
         AutoSize = True
         ButtonHeight = 32
         ButtonWidth = 31
@@ -54,7 +53,7 @@ object GDC_frmPropertyEditor: TGDC_frmPropertyEditor
         TabOrder = 0
         object tbRun: TToolButton
           Left = 0
-          Top = 2
+          Top = 0
           Hint = 'Run...'
           Action = acRunTest
           DropdownMenu = PopupMenu1
@@ -63,37 +62,37 @@ object GDC_frmPropertyEditor: TGDC_frmPropertyEditor
           Style = tbsDropDown
         end
         object tbAddTest: TToolButton
-          Left = 44
-          Top = 2
+          Left = 46
+          Top = 0
           Action = acAddTest
         end
         object tbRemoveTest: TToolButton
-          Left = 75
-          Top = 2
+          Left = 77
+          Top = 0
           Action = acDeleteTest
         end
         object tbDebug: TToolButton
-          Left = 106
-          Top = 2
+          Left = 108
+          Top = 0
           Action = acOpenTestProject
         end
         object tbClean: TToolButton
-          Left = 137
-          Top = 2
+          Left = 139
+          Top = 0
           Action = acClean
           ParentShowHint = False
           ShowHint = True
         end
         object tbWarnings: TToolButton
-          Left = 168
-          Top = 2
+          Left = 170
+          Top = 0
           Caption = 'Warnings'
           ImageIndex = 5
           Visible = False
         end
         object tbGenOver: TToolButton
-          Left = 199
-          Top = 2
+          Left = 201
+          Top = 0
           Action = acGenerateOverrides
         end
       end
@@ -254,7 +253,7 @@ object GDC_frmPropertyEditor: TGDC_frmPropertyEditor
     Left = 192
     Top = 40
     Bitmap = {
-      494C010106000900480010001000F0F0F000FF10FFFFFFFFFFFFFFFF424D3600
+      494C010106000900500010001000F0F0F000FF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       000000000000000000000000000000000000F7F7F700F7F7F700F7F7F700F7F7
       F700F7F7F700A5A6A500A5A6A500A5A6A500F7F7F700A5A6A500A5A6A500A5A6
@@ -582,6 +581,13 @@ object GDC_frmPropertyEditor: TGDC_frmPropertyEditor
       Enabled = False
       Visible = False
     end
+    object N3: TMenuItem
+      Caption = '-'
+    end
+    object miGenerateCodeForFunction: TMenuItem
+      Caption = 'Generate Code'
+      OnClick = miGenerateCodeForFunctionClick
+    end
   end
   object popTest: TPopupMenu
     Left = 272
@@ -621,6 +627,10 @@ object GDC_frmPropertyEditor: TGDC_frmPropertyEditor
     object Runalltests3: TMenuItem
       Action = acRunTest
       Caption = 'Run all tests'
+    end
+    object miGenerateCodeForClass: TMenuItem
+      Caption = 'Generate Code'
+      Visible = False
     end
   end
   object GCTimer: TTimer

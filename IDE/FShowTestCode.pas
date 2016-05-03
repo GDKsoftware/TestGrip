@@ -21,14 +21,15 @@ type
     FErrorLine: integer;
   public
     { Public declarations }
-    function LoadTestCode( const pInputTest: TInputTest; const sUnit: string): string;
+    function LoadTestCode( const pInputTest: TInputTest; const sUnit: string): string; overload;
+    function LoadTestCode(const AInputTestFunction: TInputFunction; const AUnit: string): string; overload;
 
     procedure HandleBuildError(const oError: TBuildError);
   end;
 
 implementation
 
-uses uTestGen, StrUtils;
+uses uTestGen, StrUtils, uTestGripInstall;
 
 {$R *.dfm}
 
@@ -61,6 +62,25 @@ begin
   pnlBottom.Visible := True;
 end;
 
+function TfrmShowTestcode.LoadTestCode(const AInputTestFunction: TInputFunction; const AUnit: string): string;
+var
+  sTestCode : string;
+  objTest   : TTestGen;
+begin
+  objTest := TTestGen.Create();
+  try
+    objTest.UseTestFrameWork := GetUseTestFramework;
+
+    sTestCode := objTest.GetTestCode(AUnit, AInputTestFunction.Parent, AInputTestFunction);
+  finally
+    objTest.Free;
+  end;
+
+  memoCode.Text := sTestCode;
+
+  Result := sTestCode;
+end;
+
 function TfrmShowTestcode.LoadTestCode(
   const pInputTest: TInputTest; const sUnit: string): string;
 var
@@ -69,6 +89,8 @@ var
 begin
   objTest := TTestGen.Create();
   try
+    objTest.UseTestFrameWork := GetUseTestFramework;
+
     sTestCode := objTest.GetTestCode( sUnit, pInputTest.Parent.Parent, pInputTest.Parent );
   finally
     objTest.Free;

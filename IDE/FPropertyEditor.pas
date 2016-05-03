@@ -93,6 +93,9 @@ type
     tbWarnings: TToolButton;
     acGenerateOverrides: TAction;
     tbGenOver: TToolButton;
+    miGenerateCodeForClass: TMenuItem;
+    miGenerateCodeForFunction: TMenuItem;
+    N3: TMenuItem;
     procedure btnLoadTestFileClick(Sender: TObject);
     procedure btnCreateUnitTestClick(Sender: TObject);
     procedure lblAddTestClick(Sender: TObject);
@@ -124,12 +127,15 @@ type
     procedure miPopTest_JumpToFunctionClick(Sender: TObject);
     procedure miShowlatesttestresultFuncClick(Sender: TObject);
     procedure acGenerateOverridesExecute(Sender: TObject);
+    procedure miGenerateCodeForFunctionClick(Sender: TObject);
   private
     CurrentFile: string;
     FErrorResult: string;
     Treeview1: TVirtualStringTree;
     frmShowTestResults: TfrmShowTestresults;
     miToggleExceptionHandling: TMenuItem;
+    miToggleUseDUnit: TMenuItem;
+    miToggleUseDUnitX: TMenuItem;
 
     FDefinitionSearch: TDefinitionSearch;
 
@@ -204,6 +210,8 @@ type
     procedure miFaqClick(Sender: TObject);
     procedure miOpenDemoProjectClick(Sender: TObject);
     procedure miToggleExceptionHandlingClick(Sender: TObject);
+    procedure miToggleUseDUnitClick(Sender: TObject);
+    procedure miToggleUseDUnitXClick(Sender: TObject);
 
     procedure miHelpClick(Sender: TObject);
     procedure RemoveAndFreeTest(const AInputTestForm: TfrmInputTest);
@@ -867,6 +875,23 @@ begin
   TCommonExecutionFunctions.OpenURL('http://www.gdcsoftware.com/index.php/testgrip/f-a-q/');
 end;
 
+procedure TGDC_frmPropertyEditor.miGenerateCodeForFunctionClick(Sender: TObject);
+var
+  frmShowTestCode: TfrmShowTestcode;
+begin
+  frmShowTestCode := TfrmShowTestcode.Create(nil);
+  try
+    frmShowTestCode.LoadTestCode(
+      GetSelectedTestFunction,
+      TIDEHelper.GetCurrentUnitName
+    );
+
+    frmShowTestCode.ShowModal;
+  finally
+    frmShowTestCode.Free;
+  end;
+end;
+
 procedure TGDC_frmPropertyEditor.miHelpClick(Sender: TObject);
 var
   sTestgripPath: string;
@@ -1037,6 +1062,22 @@ begin
   miToggleExceptionHandling.Checked := not miToggleExceptionHandling.Checked;
 
   SetUse3rdPartyExceptionSetting(miToggleExceptionHandling.Checked);
+end;
+
+procedure TGDC_frmPropertyEditor.miToggleUseDUnitClick(Sender: TObject);
+begin
+  miToggleUseDUnit.Checked := True;
+  miToggleUseDUnitX.Checked := False;
+
+  SetUseTestFramework(tfwDUnit);
+end;
+
+procedure TGDC_frmPropertyEditor.miToggleUseDUnitXClick(Sender: TObject);
+begin
+  miToggleUseDUnit.Checked := False;
+  miToggleUseDUnitX.Checked := True;
+
+  SetUseTestFramework(tfwDUnitX);
 end;
 
 procedure TGDC_frmPropertyEditor.DeleteSelectedTest;
@@ -1240,6 +1281,7 @@ var
   miFaqTestgrip: TMenuItem;
   miHelp: TMenuItem;
   miAboutTestgrip: TMenuItem;
+  ActiveTestframework: TTestFrameWork;
 begin
   miTestgrip := TMenuItem.Create(AINTAServices.MainMenu);
   miTestgrip.Caption := 'Testgrip';
@@ -1275,6 +1317,22 @@ begin
   miToggleExceptionHandling.Checked := GetUse3rdPartyExceptionSetting;
   miToggleExceptionHandling.OnClick := miToggleExceptionHandlingClick;
   miTestgrip.Add(miToggleExceptionHandling);
+
+  ActiveTestframework := GetUseTestFramework;
+
+  miToggleUseDUnit := TMenuItem.Create(miTestgrip);
+  miToggleUseDUnit.Caption := 'Use DUnit';
+  miToggleUseDUnit.Enabled := True;
+  miToggleUseDUnit.Checked := (ActiveTestframework = tfwDUnit);
+  miToggleUseDUnit.OnClick := miToggleUseDUnitClick;
+  miTestgrip.Add(miToggleUseDUnit);
+
+  miToggleUseDUnitX := TMenuItem.Create(miTestgrip);
+  miToggleUseDUnitX.Caption := 'Use DUnitX';
+  miToggleUseDUnitX.Enabled := True;
+  miToggleUseDUnitX.Checked := (ActiveTestframework = tfwDUnitX);
+  miToggleUseDUnitX.OnClick := miToggleUseDUnitXClick;
+  miTestgrip.Add(miToggleUseDUnitX);
 
   miHelp := TMenuItem.Create(miTestgrip);
   miHelp.Caption := '&Help';
@@ -1785,6 +1843,7 @@ var
   sError: string;
 begin
   oTestGen.DisableExceptionLib := not miToggleExceptionHandling.Checked;
+  oTestGen.UseTestFrameWork := GetUseTestFramework;
 
   result := oTestGen.RunFunctionTests( ProjectFilename,
     sUnitFilename,

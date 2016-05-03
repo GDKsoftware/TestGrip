@@ -91,7 +91,7 @@ begin
     sImplementation := sImplementation + functiontest.Imp + #13#10;
   end;
 
-  sImplementation := sImplementation + #13#10 + 'initialization' + #13#10 + 'RegisterTest(' + c_inhclassname + '.Suite);';
+  sImplementation := sImplementation + #13#10 + 'initialization' + #13#10 + 'RegisterTest(' + FUnitTestClassName + '.Suite);';
 
   // fill in template
 

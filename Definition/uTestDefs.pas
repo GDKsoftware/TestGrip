@@ -6,6 +6,8 @@ uses
   Classes, uPascalDefs, Contnrs;
 
 type
+  TTestFrameWork = (tfwDUnit = 0, tfwDUnitX = 1);
+
   TInputConstant = class;
   TInputParam = class;
   TInputTest = class;

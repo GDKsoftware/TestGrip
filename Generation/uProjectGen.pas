@@ -3,11 +3,12 @@ unit uProjectGen;
 interface
 
 uses
-  Classes;
+  Classes, uTestDefs;
 
 type
   TProjectGen = class
   protected
+    FUseTestFramework: TTestFrameWork;
     FLatestDelphiRegistryKey: string;
     FProjectPath: string;
 
@@ -52,12 +53,23 @@ type
 
     FMadExceptToolsPath: string;
 
+    procedure InitializeUses; virtual;
+    function GetUsesString: string;
+    procedure WriteContentToFile(const AContent: string);
+
     procedure SetProjectPath( const s: string );
     procedure SetExeOutputPath( const s: string );
 
     procedure RemoveDuplicateUses;
 
-    function GetTestProjectDPRCode: string;
+    function GetExtraHardcodedDefines: string; virtual;
+    function GetTypeSectionCode: string; virtual;
+    function GetVarSectionCode: string; virtual;
+    function GetRunSectionCode: string; virtual;
+    function GetTestProjectDPRCode: string; virtual;
+
+    function GetAllCode: string;
+
     function GetMadExceptSettings: string;
     function GetMSBuildBatchContent: string;
     procedure MadExceptPatch;
@@ -66,6 +78,9 @@ type
 
     function ExpandVariables(const s: string): string;
   public
+    property UseTestFramework: TTestFrameWork
+      read FUseTestFramework write FUseTestFrameWork;
+
     property ProjectPath: string
       read FProjectPath write SetProjectPath;
     property LibraryPaths: TStrings
@@ -340,6 +355,8 @@ end;
 
 constructor TProjectGen.Create;
 begin
+  inherited Create;
+
   FLatestDelphiRegistryKey := '';
 
   FUsesFiles := TStringList.Create;
@@ -371,12 +388,6 @@ begin
 
   FProjectPath := '';
 
-  FUsesFiles.Add('SysUtils');
-
-  FUsesFiles.Add('TestFrameWork in ''' + TestgripInstallPath + 'Compatibility\TestFrameWork.pas' + '''');
-  FUsesFiles.Add('TextTestRunner');
-  FUsesFiles.Add('Forms');
-
   FProjectName := 'TESTGRIP_Test' + FormatDateTime('mmddhhnnss',Now);
 
   FMadExceptInstalled := False;
@@ -384,6 +395,8 @@ begin
   FIgnoreUncaughtExceptions := True;
   FSetupCode := '';
   FExeOutputPath := '';
+
+  FUseTestFramework := tfwDUnit;
 
   DetermineLatestDelphiRegistryKey;
 
@@ -633,11 +646,23 @@ end;
 function TProjectGen.GetTestProjectDPRCode: string;
 begin
   Result :=
-    'program <TestProjectName>;' + #13#10 +
+    'program <TestProjectName>;' + #13#10#13#10 +
     '{$APPTYPE CONSOLE}' + #13#10 +
+    '<ExtraDefines>'#13#10 +
     'uses' + #13#10 +
     '<UsesFiles>;' + #13#10 +
     #13#10 +
+    '<TypeSection>'#13#10 +
+    #13#10 +
+    '<VarSection>'#13#10 +
+    'begin' + #13#10 +
+    '<RunSection>'#13#10 +
+    'end.' + #13#10;
+end;
+
+function TProjectGen.GetTypeSectionCode: string;
+begin
+  Result :=
     'type' + #13#10 +
     '  TTestGripExcept = class' + #13#10 +
     '  public' + #13#10 +
@@ -660,35 +685,26 @@ begin
   end;
 
   Result := Result +
-    'end;' + #13#10 +
-    #13#10 +
-    'var R: TTestResult;' + #13#10 +
-    'begin' + #13#10 +
-//    '  ReportMemoryLeaksOnShutdown := True;' + #13#10 +
-    '  R := nil;' + #13#10 +
-    '  try' + #13#10 +
-    '    Application.Initialize;' + #13#10 +
-    '    {$IFNDEF VER300}Application.OnException := (TTestGripExcept.Create).TestGripExceptionHandler;{$ENDIF}' + #13#10 +
-    #13#10 +
-    '<SetupCode>' + #13#10 +
-    #13#10 +
-    '    R := TextTestRunner.RunRegisteredTests(rxbHaltOnFailures);' + #13#10 +
-    '    ExitCode := R.ErrorCount + R.FailureCount;' + #13#10 +
-    '  except' + #13#10 +
-    '    on E: Exception do' + #13#10 +
-    '    begin' + #13#10 +
-    '      if Assigned(R) then' + #13#10 +
-    '      begin' + #13#10 +
-    '        ExitCode := R.ErrorCount + R.FailureCount + 1;' + #13#10 +
-    '      end' + #13#10 +
-    '      else' + #13#10 +
-    '      begin' + #13#10 +
-    '        ExitCode := 1;' + #13#10 +
-    '      end;' + #13#10 +
-    '      System.Writeln( E.ClassName + '': '' + E.Message );' + #13#10 +
-    '    end;' + #13#10 +
-    '  end;' + #13#10 +
-    'end.' + #13#10;
+    'end;' + #13#10;
+end;
+
+function TProjectGen.GetVarSectionCode: string;
+begin
+  if FUseTestFramework = tfwDUnit then
+  begin
+    Result :=
+      'var'#13#10 +
+      '  TestResults: TTestResult;';
+  end
+  else if FUseTestFramework = tfwDUnitX then
+  begin
+    Result :=
+      'var'#13#10 +
+      '  runner : ITestRunner;'#13#10 +
+      '  TestResults : IRunResults;'#13#10 +
+      '  logger : ITestLogger;'#13#10 +
+      '  nunitLogger : ITestLogger;';
+  end;
 end;
 
 function TProjectGen.GetMadExceptSettings: string;
@@ -788,6 +804,68 @@ begin
     // 2007: /p:Configuration=Debug
 end;
 
+function TProjectGen.GetRunSectionCode: string;
+begin
+  Result :=
+    '  TestResults := nil;' + #13#10 +
+    '  try' + #13#10;
+
+  if FUseTestFramework = tfwDUnit then
+  begin
+    Result := Result +
+    '    Application.Initialize;' + #13#10 +
+    '    {$IFNDEF VER300}Application.OnException := (TTestGripExcept.Create).TestGripExceptionHandler;{$ENDIF}' + #13#10 +
+    #13#10 +
+    '<SetupCode>' + #13#10 +
+    #13#10 +
+    '    TestResults := TextTestRunner.RunRegisteredTests(rxbHaltOnFailures);' + #13#10 +
+    '    ExitCode := TestResults.ErrorCount + TestResults.FailureCount;' + #13#10;
+  end
+  else if FUseTestFramework = tfwDUnitX then
+  begin
+    Result := Result +
+    '    // Check command line options, will exit if invalid'#13#10 +
+    '    TDUnitX.CheckCommandLine;'#13#10 +
+    '    // Create the test runner'#13#10 +
+    '    Runner := TDUnitX.CreateRunner;'#13#10 +
+    '    // Tell the runner to use RTTI to find Fixtures'#13#10 +
+    '    Runner.UseRTTI := True;'#13#10 +
+    '    // Tell the runner how we will log things'#13#10 +
+    '    // Log to the console window'#13#10 +
+    '    Logger := TDUnitXConsoleLogger.Create(true);'#13#10 +
+    '    Runner.AddLogger(Logger);'#13#10 +
+    '    //Generate an NUnit compatible XML File'#13#10 +
+    '    NUnitLogger := TDUnitXXMLNUnitFileLogger.Create(TDUnitX.Options.XMLOutputFile);'#13#10 +
+    '    Runner.AddLogger(NUnitLogger);'#13#10 +
+    #13#10 +
+    '<SetupCode>'#13#10 +
+    #13#10 +
+    '    //Run tests'#13#10 +
+    '    TestResults := Runner.Execute;'#13#10 +
+    '    if not TestResults.AllPassed then'#13#10 +
+    '      System.ExitCode := TestResults.ErrorCount + TestResults.FailureCount'#13#10 +
+    '    else'#13#10 +
+    '      System.ExitCode := 0;'#13#10 +
+    #13#10;
+  end;
+
+  Result := Result +
+    '  except' + #13#10 +
+    '    on E: Exception do' + #13#10 +
+    '    begin' + #13#10 +
+    '      if Assigned(TestResults) then' + #13#10 +
+    '      begin' + #13#10 +
+    '        ExitCode := TestResults.ErrorCount + TestResults.FailureCount + 1;' + #13#10 +
+    '      end' + #13#10 +
+    '      else' + #13#10 +
+    '      begin' + #13#10 +
+    '        ExitCode := 1;' + #13#10 +
+    '      end;' + #13#10 +
+    '      System.Writeln( E.ClassName + '': '' + E.Message );' + #13#10 +
+    '    end;' + #13#10 +
+    '  end;' + #13#10;
+end;
+
 function TProjectGen.ListCompileErrorsAndFatals( const lst: TStrings ): integer;
 var
   i, c: integer;
@@ -803,6 +881,91 @@ begin
       Inc(Result);
     end;
   end;
+end;
+
+function TProjectGen.GetAllCode: string;
+begin
+  Result := GetTestProjectDPRCode;
+
+  Result := ReplaceText(Result, '<TestProjectName>', FProjectName);
+  Result := ReplaceText(Result, '<UsesFiles>', GetUsesString);
+  Result := ReplaceText(Result, '<TypeSection>', GetTypeSectionCode);
+  Result := ReplaceText(Result, '<VarSection>', GetVarSectionCode);
+  Result := ReplaceText(Result, '<RunSection>', GetRunSectionCode);
+
+  Result := ReplaceText(Result, '<ExtraDefines>', GetExtraHardcodedDefines);
+
+  Result := ReplaceText(Result, '<SetupCode>', FSetupCode);
+end;
+
+function TProjectGen.GetExtraHardcodedDefines: string;
+begin
+  if FUseTestFramework = tfwDUnit then
+  begin
+    Result := '';
+  end
+  else if FUseTestFramework = tfwDUnitX then
+  begin
+    Result := '{$STRONGLINKTYPES ON}'#13#10;
+  end;
+end;
+
+procedure TProjectGen.WriteContentToFile(const AContent: string);
+var
+  f: Text;
+begin
+  Assign(f, FProjectPath + FProjectName + '.dpr');
+  try
+    Rewrite(f);
+    Write(f, AContent);
+  finally
+    Close(f);
+  end;
+end;
+
+function TProjectGen.GetUsesString: string;
+var
+  c: Integer;
+  i: Integer;
+begin
+  Result := '';
+  c := FUsesFiles.Count - 1;
+  for i := 0 to c do
+  begin
+    if (i <> 0) then
+    begin
+      if ((i - 1) >= 0) and StartsText('{$', FUsesFiles[i - 1]) then
+      begin
+        // don't add , to compiler directives
+        Result := Result + ''#13''#10'';
+      end
+      else
+      begin
+        Result := Result + ',' + ''#13''#10'';
+      end;
+    end;
+
+    Result := Result + '  ' + FUsesFiles[i];
+  end;
+end;
+
+procedure TProjectGen.InitializeUses;
+begin
+  FUsesFiles.Insert(0, 'Forms');
+
+  if FUseTestFramework = tfwDUnit then
+  begin
+    FUsesFiles.Insert(0, 'TextTestRunner');
+    FUsesFiles.Insert(0, 'TestFrameWork in ''' + TestgripInstallPath + 'Compatibility\TestFrameWork.pas' + '''');
+  end
+  else if FUseTestFramework = tfwDUnitX then
+  begin
+    FUsesFiles.Insert(0, 'DUnitX.TestFramework');
+    FUsesFiles.Insert(0, 'DUnitX.Loggers.Xml.NUnit');
+    FUsesFiles.Insert(0, 'DUnitX.Loggers.Console');
+  end;
+
+  FUsesFiles.Insert(0, 'SysUtils');
 end;
 
 procedure TProjectGen.MadExceptPatch;
@@ -892,46 +1055,13 @@ end;
 procedure TProjectGen.SaveProjectFile;
 var
   sContent: string;
-  f: TextFile;
-  sUsesStr: string;
-  i, c: integer;
 begin
-  sContent := GetTestProjectDPRCode;
-
-  sContent := ReplaceText( sContent, '<TestProjectName>', FProjectName );
-  
+  InitializeUses;
   RemoveDuplicateUses;
 
-  sUsesStr := '';
-  c := FUsesFiles.Count - 1;
-  for i := 0 to c do
-  begin
-    if (i <> 0) then
-    begin
-      if ((i-1) >= 0) and StartsText('{$', FUsesFiles[i-1]) then
-      begin
-        // don't add , to compiler directives
-        sUsesStr := sUsesStr + #13#10;
-      end
-      else
-      begin
-        sUsesStr := sUsesStr + ',' + #13#10;
-      end;
-    end;
-    sUsesStr := sUsesStr + '  ' + FUsesFiles[i];
-  end;
+  sContent := GetAllCode;
 
-  sContent := ReplaceText( sContent, '<UsesFiles>', sUsesStr );
-  sContent := ReplaceText( sContent, '<SetupCode>', FSetupCode );
-
-  Assign( f, FProjectPath + FProjectName + '.dpr' );
-  try
-    Rewrite( f );
-
-    Write( f, sContent );
-  finally
-    Close( f );
-  end;
+  WriteContentToFile(sContent);
 end;
 
 procedure TProjectGen.SetExeOutputPath(const s: string);
