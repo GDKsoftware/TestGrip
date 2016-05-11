@@ -35,6 +35,10 @@ type
 type
   ENotSupportedException = class(Exception);
 {$endif}
+{$ifdef VER200}
+type
+  ENotSupportedException = class(Exception);
+{$endif}
 
 implementation
 
