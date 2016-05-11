@@ -1,7 +1,7 @@
 program UnitSearch;
 
 uses
-  Vcl.Forms,
+  Forms,
   FUnitSearchMain in 'FUnitSearchMain.pas' {FrmUnitSearchMain},
   uCodeHelpers in '..\..\Core\uCodeHelpers.pas',
   uDefinitionSearch in '..\..\Core\uDefinitionSearch.pas',

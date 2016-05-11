@@ -61,7 +61,7 @@ implementation
 { TUsedUnitSearch }
 
 uses
-  uUnitParser, SysUtils, uCommonFunctions;
+  uUnitParser, SysUtils, uCommonFunctions, StrUtils;
 
 const
   PasFileExtension = '.pas';
@@ -150,7 +150,7 @@ begin
 
   if APathHint <> '' then
   begin
-    if APathHint.EndsWith(PasFileExtension, True) then
+    if EndsText(PasFileExtension, APathHint) then
     begin
       FullPath := APathHint;
     end
