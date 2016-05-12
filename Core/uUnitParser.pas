@@ -6,6 +6,11 @@ uses
   Classes, Contnrs, uPascalDefs;
 
 type
+  TFileBoundary = record
+    Start: Integer;
+    Stop: Integer;
+  end;
+
   TUnitParser = class
   protected
     FRawOuterUsesList: TStrings;
@@ -31,6 +36,9 @@ type
     FHasUTF8BOM: boolean;
 
     FStartOfImplementation: integer;
+
+    FOuterUsesBoundaries: TFileBoundary;
+    FInnerUsesBoundaries: TFileBoundary;
 
     function ReadLoopUntilSemiColon(const sIn: ansistring; iStart: integer; var sOut: string): boolean;
 
@@ -694,6 +702,11 @@ begin
   FInitCode.Clear;
   FPropertyList.Clear;
 
+  FInnerUsesBoundaries.Start := 0;
+  FInnerUsesBoundaries.Stop := 0;
+  FOuterUsesBoundaries.Start := 0;
+  FOuterUsesBoundaries.Stop := 0;
+
   block := '';
 
   bEof := False;
@@ -1000,6 +1013,10 @@ begin
             FInterfaceClassList.AddObject(sCurrentClass + '=' + '', CurrentClassDef);
 
             bInInterfaceClass := True;
+          end
+          else
+          begin
+            FOuterUsesBoundaries.Start := Max(0, iTotalBytesDone - iRead) + i - 1;
           end;
 
           bInInterface := True;
@@ -1022,6 +1039,8 @@ begin
             FStartOfImplementation := iLineNumberOffset;
           end;
 
+          FInnerUsesBoundaries.Start := Max(0, iTotalBytesDone - iRead) + i - 1;
+
           s.Seek( Max(0, iTotalBytesDone - iRead) + i, soBeginning );
           ExtractAllMethods(s, bGetLineNumbers, iLineNumberOffset);
           s.Seek( iTotalBytesDone, soBeginning );
@@ -1030,19 +1049,23 @@ begin
         begin
           if bInImplementation then
           begin
+            FInnerUsesBoundaries.Start := Max(0, iTotalBytesDone - iRead) + i - 4 - 1;
             bInUses2 := not ReadLoopUntilSemiColon(block, i - 4, sUsesList2);
           end
           else
           begin
+            FOuterUsesBoundaries.Start := Max(0, iTotalBytesDone - iRead) + i - 4 - 1;
             bInUses1 := not ReadLoopUntilSemiColon(block, i - 4, sUsesList1);
           end;
         end
         else if bIsDpk and SameText(sCurrentKeyWord, 'contains') then
         begin
+          FOuterUsesBoundaries.Start := Max(0, iTotalBytesDone - iRead) + i - 9 - 1;
           bInUses1 := not ReadLoopUntilSemiColon(block, i - 9, sUsesList1);
         end
         else if bIsDpk and SameText(sCurrentKeyWord, 'requires') then
         begin
+          FInnerUsesBoundaries.Start := Max(0, iTotalBytesDone - iRead) + i - 9 - 1;
           bInUses2 := not ReadLoopUntilSemiColon(block, i - 9, sUsesList2);
         end
         else if SameText(sCurrentKeyWord, 'private') then
@@ -1211,6 +1234,9 @@ begin
   end;
 
   CurrentAnnotations.Free;
+
+  FOuterUsesBoundaries.Stop := FOuterUsesBoundaries.Start + Length(sUsesList1);
+  FInnerUsesBoundaries.Stop := FInnerUsesBoundaries.Start + Length(sUsesList2);
 
   FRawOuterUsesList.Text := sUsesList1;
   FRawInnerUsesList.Text := sUsesList2;
@@ -1389,27 +1415,31 @@ end;
 function TUnitParser.ReadLoopUntilSemiColon(const sIn: ansistring; iStart: integer; var sOut: string): boolean;
 var
   i: integer;
+  StartIdx: Integer;
 begin
   Result := False;
 
-  if iStart <> 0 then
+  if iStart >= 1 then
   begin
-    i := PosEx(';', sIn, iStart);
+    StartIdx := iStart;
   end
   else
   begin
-    i := Pos(';', sIn);
+    StartIdx := 1;
   end;
 
+  // todo: skip ; in comments
+
+  i := PosEx(';', sIn, StartIdx);
   if i <> 0 then
   begin
-    sOut := sOut + Copy(sIn, iStart, i - iStart + 1);
+    sOut := sOut + Copy(sIn, StartIdx, i - StartIdx + 1);
 
     Result := True;
   end
   else
   begin
-    sOut := sOut + Copy(sIn, iStart);
+    sOut := sOut + Copy(sIn, StartIdx);
   end;
 end;
 

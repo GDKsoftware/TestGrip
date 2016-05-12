@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<IntegratedUnitTest>
+<class name="TUnitRegen">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode />
+<vars />
+<extrauses />
+<variables />
+<function name="GetFormattedUses" type="string">
+<defines />
+<usecustomsetupcode>false</usecustomsetupcode>
+<customsetupcode />
+<initcode>TestObj := TUnitRegen.Create;</initcode>
+<vars />
+<tests>
+<test displayname="t1">
+<description />
+<defines />
+<initcode>TestObj := TUnitRegen.Create;
+AUses := TStringList.Create;
+</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="TStrings" name="AUses">nil</param>
+</params>
+<equals not="false" />
+<implies />
+</test>
+<test displayname="t2">
+<description />
+<defines />
+<initcode>TestObj := TUnitRegen.Create;
+AUses := TStringList.Create;
+AUses.Add('Hello');</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="TStrings" name="AUses">nil</param>
+</params>
+<equals not="false" xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="binary.base64">dXNlcw0KICBIZWxsbzsNCg==</equals>
+<implies />
+</test>
+<test displayname="t3">
+<description />
+<defines />
+<initcode>TestObj := TUnitRegen.Create;
+AUses := TStringList.Create;
+AUses.Add('Hello1');
+AUses.Add('Hello2');</initcode>
+<vars />
+<preimpliescode />
+<params>
+<param type="TStrings" name="AUses">nil</param>
+</params>
+<equals not="false" xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="binary.base64">dXNlcw0KICBIZWxsbzEsDQogIEhlbGxvMjsNCg==</equals>
+<implies />
+</test>
+</tests>
+</function>
+</class>
+</IntegratedUnitTest>
