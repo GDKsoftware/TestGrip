@@ -168,14 +168,20 @@ end;
 
 function TProjectParser.GetUnitFilename(const sUnit: string): string;
 var
-  i,c: Integer;
+  i, c: Integer;
+  SearchUnit: string;
 begin
   Result := '';
+
+  SearchUnit := sUnit;
+  if not EndsText('.pas', SearchUnit) then
+    SearchUnit := SearchUnit + '.pas';
+
 
   c := FFiles.Count - 1;
   for i := 0 to c do
   begin
-    if EndsText(sUnit + '.pas', FFiles[i]) then
+    if EndsText(SearchUnit, FFiles[i]) then
     begin
       Result := IncludeTrailingPathDelimiter(ExtractFilePath(FFilename)) + FFiles[i];
       Exit;
