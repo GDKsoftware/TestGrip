@@ -1098,21 +1098,17 @@ begin
       t := TInputTest(NodeData.Data);
       tf := t.Parent;
 
-      t.Free;
-
       tf.TestList.Remove(t);
 
       if tf.TestList.Count = 0 then // delete function also
       begin
         tfc := tf.Parent;
         tfc.FunctionList.Remove(tf);
-        tf.Free;
 
         if tfc.FunctionList.Count = 0 then
         begin
           // delete object
           PascalFile.TestClassList.Remove(tfc);
-          tfc.Free;
 
           // Delete node
           Treeview1.DeleteNode(Treeview1.FocusedNode.Parent.Parent);
