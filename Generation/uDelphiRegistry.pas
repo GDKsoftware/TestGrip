@@ -189,6 +189,11 @@ var
 begin
   reg := TRegistry.Create( HKEY_CURRENT_USER );
   try
+    // Delphi 10.1 Berlin
+    {$ifdef VER310}
+    Result := GetRegistryKeyNameIfItExists(reg, REGKEY_DXE11);
+    {$endif}
+
     // Delphi 10 seattle
     {$ifdef VER300}
     Result := GetRegistryKeyNameIfItExists(reg, REGKEY_DXE10);
