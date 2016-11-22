@@ -9,7 +9,7 @@
         <Projects Include="Apps\TestIDE\TestIDE.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Apps\TestGripPlugin\IntegratedUnitTest_DXE10.dproj">
+        <Projects Include="Apps\TestGripPlugin\IntegratedUnitTest_DXE11.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="Apps\UnitBrowser\UnitBrowser.dproj">
@@ -50,14 +50,14 @@
     <Target Name="TestIDE:Make">
         <MSBuild Projects="Apps\TestIDE\TestIDE.dproj" Targets="Make"/>
     </Target>
-    <Target Name="IntegratedUnitTest_DXE10">
-        <MSBuild Projects="Apps\TestGripPlugin\IntegratedUnitTest_DXE10.dproj"/>
+    <Target Name="IntegratedUnitTest_DXE11">
+        <MSBuild Projects="Apps\TestGripPlugin\IntegratedUnitTest_DXE11.dproj"/>
     </Target>
-    <Target Name="IntegratedUnitTest_DXE10:Clean">
-        <MSBuild Projects="Apps\TestGripPlugin\IntegratedUnitTest_DXE10.dproj" Targets="Clean"/>
+    <Target Name="IntegratedUnitTest_DXE11:Clean">
+        <MSBuild Projects="Apps\TestGripPlugin\IntegratedUnitTest_DXE11.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="IntegratedUnitTest_DXE10:Make">
-        <MSBuild Projects="Apps\TestGripPlugin\IntegratedUnitTest_DXE10.dproj" Targets="Make"/>
+    <Target Name="IntegratedUnitTest_DXE11:Make">
+        <MSBuild Projects="Apps\TestGripPlugin\IntegratedUnitTest_DXE11.dproj" Targets="Make"/>
     </Target>
     <Target Name="UnitBrowser">
         <MSBuild Projects="Apps\UnitBrowser\UnitBrowser.dproj"/>
@@ -96,13 +96,13 @@
         <MSBuild Projects="Apps\XDataAPIDocGen\XDataAPIDocGen.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="TestgripProjectTester_DXE10;TestIDE;IntegratedUnitTest_DXE10;UnitBrowser;UnitSearch;impgen;XDataAPIDocGen"/>
+        <CallTarget Targets="TestgripProjectTester_DXE10;TestIDE;IntegratedUnitTest_DXE11;UnitBrowser;UnitSearch;impgen;XDataAPIDocGen"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TestgripProjectTester_DXE10:Clean;TestIDE:Clean;IntegratedUnitTest_DXE10:Clean;UnitBrowser:Clean;UnitSearch:Clean;impgen:Clean;XDataAPIDocGen:Clean"/>
+        <CallTarget Targets="TestgripProjectTester_DXE10:Clean;TestIDE:Clean;IntegratedUnitTest_DXE11:Clean;UnitBrowser:Clean;UnitSearch:Clean;impgen:Clean;XDataAPIDocGen:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TestgripProjectTester_DXE10:Make;TestIDE:Make;IntegratedUnitTest_DXE10:Make;UnitBrowser:Make;UnitSearch:Make;impgen:Make;XDataAPIDocGen:Make"/>
+        <CallTarget Targets="TestgripProjectTester_DXE10:Make;TestIDE:Make;IntegratedUnitTest_DXE11:Make;UnitBrowser:Make;UnitSearch:Make;impgen:Make;XDataAPIDocGen:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

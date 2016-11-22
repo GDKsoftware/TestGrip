@@ -44,6 +44,7 @@ const
   REGKEY_DXE7  = 'Software\Embarcadero\BDS\15.0';
   REGKEY_DXE8  = 'Software\Embarcadero\BDS\16.0';
   REGKEY_DXE10 = 'Software\Embarcadero\BDS\17.0';
+  REGKEY_DXE11 = 'Software\Embarcadero\BDS\18.0';
 
 type
 
@@ -123,6 +124,9 @@ class function TDelphiRegistry.GetDelphiVersion: string;
 begin
   Result := 'Unknown';
 
+  {$ifdef VER310}
+  Result := 'DXE11';
+  {$endif}
   {$ifdef VER300}
   Result := 'DXE10';
   {$endif}
