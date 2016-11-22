@@ -556,7 +556,7 @@ var
 begin
   TestResultVar := 'TestResult';
 
-  if (AClass.ClassName <> '') and not IsProcedure then
+  if not IsProcedure then
   begin
     ComposedTestFunction.Imp := ComposedTestFunction.Imp + '  ' + TestResultVar + ': ' + AFunction.CachedType + ';' + ''#13''#10'';
   end;
