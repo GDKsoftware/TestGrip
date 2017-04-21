@@ -45,6 +45,7 @@ const
   REGKEY_DXE8  = 'Software\Embarcadero\BDS\16.0';
   REGKEY_DXE10 = 'Software\Embarcadero\BDS\17.0';
   REGKEY_DXE11 = 'Software\Embarcadero\BDS\18.0';
+  REGKEY_DXE12 = 'Software\Embarcadero\BDS\19.0';
 
 type
 
@@ -124,6 +125,9 @@ class function TDelphiRegistry.GetDelphiVersion: string;
 begin
   Result := 'Unknown';
 
+  {$ifdef VER320}
+  Result := 'DXE12';
+  {$endif}
   {$ifdef VER310}
   Result := 'DXE11';
   {$endif}
@@ -189,6 +193,11 @@ var
 begin
   reg := TRegistry.Create( HKEY_CURRENT_USER );
   try
+    // Delphi 10.2 Tokyo
+    {$ifdef VER320}
+    Result := GetRegistryKeyNameIfItExists(reg, REGKEY_DXE12);
+    {$endif}
+
     // Delphi 10.1 Berlin
     {$ifdef VER310}
     Result := GetRegistryKeyNameIfItExists(reg, REGKEY_DXE11);
