@@ -24,6 +24,15 @@
         <Projects Include="Apps\XDataAPIDocGen\XDataAPIDocGen.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Apps\WindmillPP\WindmillPP.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\WindmillPP\WindmillUnitTests.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\install\Demoproject\TheWorld.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -95,14 +104,41 @@
     <Target Name="XDataAPIDocGen:Make">
         <MSBuild Projects="Apps\XDataAPIDocGen\XDataAPIDocGen.dproj" Targets="Make"/>
     </Target>
+    <Target Name="WindmillPP">
+        <MSBuild Projects="Apps\WindmillPP\WindmillPP.dproj"/>
+    </Target>
+    <Target Name="WindmillPP:Clean">
+        <MSBuild Projects="Apps\WindmillPP\WindmillPP.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="WindmillPP:Make">
+        <MSBuild Projects="Apps\WindmillPP\WindmillPP.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="WindmillUnitTests">
+        <MSBuild Projects="Apps\WindmillPP\WindmillUnitTests.dproj"/>
+    </Target>
+    <Target Name="WindmillUnitTests:Clean">
+        <MSBuild Projects="Apps\WindmillPP\WindmillUnitTests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="WindmillUnitTests:Make">
+        <MSBuild Projects="Apps\WindmillPP\WindmillUnitTests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TheWorld">
+        <MSBuild Projects="Apps\install\Demoproject\TheWorld.dproj"/>
+    </Target>
+    <Target Name="TheWorld:Clean">
+        <MSBuild Projects="Apps\install\Demoproject\TheWorld.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TheWorld:Make">
+        <MSBuild Projects="Apps\install\Demoproject\TheWorld.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="TestgripProjectTester_DXE12;IntegratedUnitTest_DXE12;TestIDE;UnitBrowser;UnitSearch;impgen;XDataAPIDocGen"/>
+        <CallTarget Targets="TestgripProjectTester_DXE12;IntegratedUnitTest_DXE12;TestIDE;UnitBrowser;UnitSearch;impgen;XDataAPIDocGen;WindmillPP;WindmillUnitTests;TheWorld"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TestgripProjectTester_DXE12:Clean;IntegratedUnitTest_DXE12:Clean;TestIDE:Clean;UnitBrowser:Clean;UnitSearch:Clean;impgen:Clean;XDataAPIDocGen:Clean"/>
+        <CallTarget Targets="TestgripProjectTester_DXE12:Clean;IntegratedUnitTest_DXE12:Clean;TestIDE:Clean;UnitBrowser:Clean;UnitSearch:Clean;impgen:Clean;XDataAPIDocGen:Clean;WindmillPP:Clean;WindmillUnitTests:Clean;TheWorld:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TestgripProjectTester_DXE12:Make;IntegratedUnitTest_DXE12:Make;TestIDE:Make;UnitBrowser:Make;UnitSearch:Make;impgen:Make;XDataAPIDocGen:Make"/>
+        <CallTarget Targets="TestgripProjectTester_DXE12:Make;IntegratedUnitTest_DXE12:Make;TestIDE:Make;UnitBrowser:Make;UnitSearch:Make;impgen:Make;XDataAPIDocGen:Make;WindmillPP:Make;WindmillUnitTests:Make;TheWorld:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
