@@ -101,6 +101,8 @@ type
   protected
     procedure SetLocation(const Value: TTreeLocation);
     function GetRingCount: integer;
+
+    procedure VolatileFunction;
   public
     property Location: TTreeLocation
       read FLocation write SetLocation;
@@ -110,6 +112,16 @@ type
 
   IHello = interface
     function Hello(const A, B: Integer): Integer;
+  end;
+
+  TSomeBaseClass = class
+  public
+    function Hello: string; virtual;
+  end;
+
+  TSomeOverride = class(TSomeBaseClass)
+  public
+    function Hello: string; override;
   end;
 
   {
@@ -126,6 +138,8 @@ type
 
   // Custom round function
   function Rounder(Value: Extended; Decimals: Integer): Extended;
+
+  procedure TheLastVolatileFunction;
 
 implementation
 
@@ -282,6 +296,15 @@ begin
   FLocation := Value;
 end;
 
+procedure TTree.VolatileFunction;
+begin
+  with TTree.Create do
+  begin
+    SetLocation(tlForest);
+    Self.SetLocation(tlForest);
+  end;
+end;
+
 function CalculateBMI(Length: double; Weight: double): double;
 begin
   result := round(Weight / (Length * Length));
@@ -309,5 +332,23 @@ begin
   Result := Math.Floor((Value * A) + 0.5) / A;
 end;
 
+procedure TheLastVolatileFunction;
+begin
+with TTree.Create do
+begin
+SetLocation(tlForest);
+//Self.SetLocation(tlForest);
+end;
+end;
+
+function TSomeBaseClass.Hello: string;
+begin
+  Result := 'Hello Base';
+end;
+
+function TSomeOverride.Hello: string;
+begin
+  Result := 'Hello Override';
+end;
 
 end.

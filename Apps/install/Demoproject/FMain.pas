@@ -76,12 +76,3 @@ begin
 end;
 
 end.
- := TWorld.Create;
-end;
-
-procedure TfrmWorld.FormDestroy(Sender: TObject);
-begin
-  FWorld.Free;
-end;
-
-end.
