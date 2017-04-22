@@ -54,6 +54,12 @@ type
 
     FAnnotations: TStrings;
 
+    FIsVirtual: Boolean;
+    FIsOverride: Boolean;
+    FIsOverloaded: Boolean;
+
+    procedure SetIsVirtualOverride(const bVirtualAndOverride: Boolean);
+
     procedure ParseRawMethodString;
     procedure ParseRawParamDefinition;
 
@@ -91,7 +97,14 @@ type
       read FLineNumber write FLineNumber;
 
     property Scope: TClassScope
-      read FScope;
+      read FScope write FScope;
+
+    property IsVirtual: Boolean
+      read FIsVirtual write FIsVirtual;
+    property IsVirtualOverride: Boolean
+      read FIsOverride write SetIsVirtualOverride;
+    property IsOverloaded: Boolean
+      read FIsOverloaded write FIsOverloaded;
 
     constructor Create( const sName: string; const sFuncType: string ); overload;
     constructor Create( const sRawDefinition: string; bIsSignature: boolean; aClassScope: TClassScope ); overload;
@@ -396,6 +409,12 @@ begin
 
     Inc(i);
   end;
+end;
+
+procedure TMethodDefinition.SetIsVirtualOverride(const bVirtualAndOverride: Boolean);
+begin
+  FIsVirtual := bVirtualAndOverride;
+  FIsOverride := bVirtualAndOverride;
 end;
 
 procedure TMethodDefinition.ParseRawMethodString;

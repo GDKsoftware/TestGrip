@@ -49,6 +49,8 @@ type
     function ExtractParentClassFromDefinition( const s: string ): string;
 
     function FilterVariable( const s: string ): string;
+
+    procedure UpdateMethodBasedOnDefinition(const aMethod: TMethodDefinition);
   public
     property HasUTF8BOM: boolean
       read FHasUTF8BOM;
@@ -101,7 +103,11 @@ type
 
     function FindClosestMethodDefinition(const aMDef: TMethodDefinition): TMethodDefinition;
 
+    function FindNextMethodAfter(const aMethod: TMethodDefinition): TMethodDefinition;
+
     function IsNonPrivate(const sSigniture: string): boolean;
+
+    function GetDefinition(const sSigniture: string): TMethodDefinition;
 
     /// <summary>Fill lst with methoddefinitions within given class, DO NOT FREE definitions</summary>
     procedure ListInterfaceMethods(const sClassname: string; const lst: TList);
@@ -115,7 +121,7 @@ type
 implementation
 
 uses
-  StrUtils, SysUtils, Dialogs, Math, uCommonFunctions{$ifdef VER150}, uD7Functions{$endif};
+  StrUtils, SysUtils, Math, uCommonFunctions{$ifdef VER150}, uD7Functions{$endif};
 
 
 function IsValidPascalIdentifier(const sIdent: string): boolean;
@@ -177,6 +183,22 @@ begin
     end;
 
     Result := s[i] + Result;
+  end;
+end;
+
+procedure TUnitParser.UpdateMethodBasedOnDefinition(const aMethod: TMethodDefinition);
+var
+  sSigniture: string;
+  Definition: TMethodDefinition;
+begin
+  sSigniture := aMethod.Signature;
+  Definition := GetDefinition(sSigniture);
+  if Assigned(Definition) then
+  begin
+    aMethod.Scope := Definition.Scope;
+    aMethod.IsVirtualOverride := Definition.IsVirtualOverride;
+    aMethod.IsVirtual := Definition.IsVirtual;
+    aMethod.IsOverloaded := Definition.IsOverloaded;
   end;
 end;
 
@@ -250,6 +272,32 @@ begin
   Result := aHighestMatched;
 end;
 
+function TUnitParser.FindNextMethodAfter(const aMethod: TMethodDefinition): TMethodDefinition;
+var
+  AnotherMethod: TMethodDefinition;
+  MethodIdx, MethodCount: Integer;
+begin
+  Result := nil;
+
+  MethodCount := FMethodList.Count - 1;
+  for MethodIdx := 0 to MethodCount do
+  begin
+    AnotherMethod := TMethodDefinition(FMethodList[MethodIdx]);
+
+    if Assigned(Result) then
+    begin
+      if (AnotherMethod.LineNumber > aMethod.LineNumber) and (AnotherMethod.LineNumber < Result.LineNumber) then
+      begin
+        Result := AnotherMethod;
+      end;
+    end
+    else if AnotherMethod.LineNumber > aMethod.LineNumber then
+    begin
+      Result := AnotherMethod;
+    end;
+  end;
+end;
+
 constructor TUnitParser.Create;
 begin
   FRawOuterUsesList := TStringList.Create;
@@ -275,7 +323,12 @@ begin
 end;
 
 destructor TUnitParser.Destroy;
+var
+  Idx: Integer;
 begin
+  for Idx := 0 to FNonPrivateMethods.Count - 1 do
+    FNonPrivateMethods.Objects[Idx].Free;
+
   FreeAndNil(FNonPrivateMethods);
 
   FreeAndNil(FInterfaceClassList);
@@ -467,6 +520,9 @@ begin
 
               iAnotherLineOffset := iAnotherLineOffset + iMethodLineNumber;
             end;
+
+            UpdateMethodBasedOnDefinition(fdef);
+
             FMethodList.Add( fdef );
           end
           else
@@ -567,6 +623,17 @@ begin
   Result := (FNonPrivateMethods.IndexOf(sSigniture) <> -1);
 end;
 
+function TUnitParser.GetDefinition(const sSigniture: string): TMethodDefinition;
+var
+  Idx: Integer;
+begin
+  Idx := FNonPrivateMethods.IndexOf(sSigniture);
+  if Idx <> -1 then
+    Result := TMethodDefinition(FNonPrivateMethods.Objects[Idx])
+  else
+    Result := nil;
+end;
+
 procedure TUnitParser.ListInterfaceMethods(const sClassname: string; const lst: TList);
 var
   mdef: TMethodDefinition;
@@ -641,7 +708,7 @@ var
   vardef: TVariableDefinition;
   pdef: TPropertyDefinition;
   bInRecord: boolean;
-  mdef: TMethodDefinition;
+  CurrentMethodDefinition: TMethodDefinition;
   bMethodBracketOpen: boolean;
   iInGenericTypes: integer;
   iLineNumberOffset: integer;
@@ -691,11 +758,14 @@ begin
   iLineNumberOffset := 0;
   iLinesInBlock := 0;
 
+  CurrentMethodDefinition := nil;
+
   CurrentAnnotations := TStringList.Create;
 
   FOuterUsesList.Clear;
   FInnerUsesList.Clear;
   FMethodList.Clear;
+  FNonPrivateMethods.Clear;
   FInterfaceMethodList.Clear;
   FInterfaceClassList.Clear;
   FRequires.Clear;
@@ -891,6 +961,22 @@ begin
 
         if not bInImplementation then
         begin
+          if Assigned(CurrentMethodDefinition) then
+          begin
+            if SameText(sCurrentKeyWord, 'virtual') then
+            begin
+              CurrentMethodDefinition.IsVirtual := True;
+            end
+            else if SameText(sCurrentKeyWord, 'override') then
+            begin
+              CurrentMethodDefinition.IsVirtualOverride := True;
+            end
+            else if SameText(sCurrentKeyWord, 'overload') then
+            begin
+              CurrentMethodDefinition.IsOverloaded := True;
+            end;
+          end;
+
           if bInProperty and (bInPublic or bInPublished) then
           begin
             pdef := TPropertyDefinition.Create( sTempLine, sCurrentClass );
@@ -931,21 +1017,18 @@ begin
                 aScope := csPublic;
               end;
 
-              mdef := TMethodDefinition.Create(sTempLine, false, aScope);
-              try
-                // classname is not inline here, so we get it from the currentclass var
-                mdef.InClass := sCurrentClass;
-                mdef.Annotations.AddStrings(CurrentAnnotations);
+              CurrentMethodDefinition := TMethodDefinition.Create(sTempLine, false, aScope);
 
-                if bInInterfaceClass then
-                begin
-                  FInterfaceMethodList.Add(TMethodDefinition.Create(mdef));
-                end;
+              // classname is not inline here, so we get it from the currentclass var
+              CurrentMethodDefinition.InClass := sCurrentClass;
+              CurrentMethodDefinition.Annotations.AddStrings(CurrentAnnotations);
 
-                FNonPrivateMethods.Add(mdef.Signature);
-              finally
-                mdef.Free;
+              if bInInterfaceClass then
+              begin
+                FInterfaceMethodList.Add(TMethodDefinition.Create(CurrentMethodDefinition));
               end;
+
+              FNonPrivateMethods.AddObject(CurrentMethodDefinition.Signature, CurrentMethodDefinition);
             end;
 
             CurrentAnnotations.Clear;
