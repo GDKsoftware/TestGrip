@@ -58,8 +58,6 @@ type
     FIsOverride: Boolean;
     FIsOverloaded: Boolean;
 
-    procedure SetIsVirtualOverride(const bVirtualAndOverride: Boolean);
-
     procedure ParseRawMethodString;
     procedure ParseRawParamDefinition;
 
@@ -101,8 +99,8 @@ type
 
     property IsVirtual: Boolean
       read FIsVirtual write FIsVirtual;
-    property IsVirtualOverride: Boolean
-      read FIsOverride write SetIsVirtualOverride;
+    property IsOverride: Boolean
+      read FIsOverride write FIsOverride;
     property IsOverloaded: Boolean
       read FIsOverloaded write FIsOverloaded;
 
@@ -409,12 +407,6 @@ begin
 
     Inc(i);
   end;
-end;
-
-procedure TMethodDefinition.SetIsVirtualOverride(const bVirtualAndOverride: Boolean);
-begin
-  FIsVirtual := bVirtualAndOverride;
-  FIsOverride := bVirtualAndOverride;
 end;
 
 procedure TMethodDefinition.ParseRawMethodString;
