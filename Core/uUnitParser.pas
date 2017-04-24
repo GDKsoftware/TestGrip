@@ -196,7 +196,7 @@ begin
   if Assigned(Definition) then
   begin
     aMethod.Scope := Definition.Scope;
-    aMethod.IsVirtualOverride := Definition.IsVirtualOverride;
+    aMethod.IsOverride := Definition.IsOverride;
     aMethod.IsVirtual := Definition.IsVirtual;
     aMethod.IsOverloaded := Definition.IsOverloaded;
   end;
@@ -969,7 +969,7 @@ begin
             end
             else if SameText(sCurrentKeyWord, 'override') then
             begin
-              CurrentMethodDefinition.IsVirtualOverride := True;
+              CurrentMethodDefinition.IsOverride := True;
             end
             else if SameText(sCurrentKeyWord, 'overload') then
             begin

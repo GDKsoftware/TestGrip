@@ -37,7 +37,7 @@ var
   ContainsInherited: Boolean;
   AssignedToResult: Boolean;
 begin
-  ExpectInherited := Method.IsVirtualOverride;
+  ExpectInherited := Method.IsOverride;
   if ExpectInherited then
   begin
     ExpectResult := (Method.Functype <> 'void') and (Method.Functype <> 'constructor') and (Method.Functype <> 'destructor');
