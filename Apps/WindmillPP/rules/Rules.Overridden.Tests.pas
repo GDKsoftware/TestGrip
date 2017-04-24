@@ -53,7 +53,7 @@ begin
   FCurrentCode := TStringList.Create;
 
   FCurrentMethod := TMethodDefinition.Create('function DoSomethingWithMyObject: Integer', True, TClassScope.csPublic);
-  FCurrentMethod.IsVirtualOverride := True;
+  FCurrentMethod.IsOverride := True;
 end;
 
 procedure TRulesOverriddenTests.Teardown;

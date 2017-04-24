@@ -564,6 +564,8 @@ begin
 
   end;
 
+  FDefMethodName := Trim(FDefMethodName);
+
   FInClass := DetermineClassSigniture(FInClass);
 
   ParseRawParamDefinition;
