@@ -364,13 +364,14 @@ var
   fdef: TMethodDefinition;
   iAnotherLineOffset: integer;
   iMethodLineNumber: integer;
+  iMethodDefinitionLineCount: Integer;
   iSkip: integer;
 begin
   bInParams := False;
   sMethodDef := '';
   largeblock := '';
   bInMethodDef := false;
-  iAnotherLineOffset := 0;
+  iAnotherLineOffset := iLineNumberOffset;
 
   i := 1;
 
@@ -515,8 +516,9 @@ begin
             if bGetLineNumbers then
             begin
               iMethodLineNumber := TCommonStringFunctions.CountLines(largeblock, lfDos, i);
+              iMethodDefinitionLineCount := TCommonStringFunctions.CountLines(sMethodDef, lfDos);
 
-              fdef.LineNumber := iLineNumberOffset + iAnotherLineOffset + iMethodLineNumber + 1;
+              fdef.LineNumber := iAnotherLineOffset + iMethodLineNumber - iMethodDefinitionLineCount;
 
               iAnotherLineOffset := iAnotherLineOffset + iMethodLineNumber;
             end;
@@ -1124,7 +1126,7 @@ begin
 
           FInnerUsesBoundaries.Start := Max(0, iTotalBytesDone - iRead) + i - 1;
 
-          s.Seek( Max(0, iTotalBytesDone - iRead) + i, soBeginning );
+          s.Seek( FInnerUsesBoundaries.Start, soBeginning );
           ExtractAllMethods(s, bGetLineNumbers, iLineNumberOffset);
           s.Seek( iTotalBytesDone, soBeginning );
         end
