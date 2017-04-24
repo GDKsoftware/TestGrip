@@ -61,11 +61,21 @@ procedure TRunnerDefault.ExecuteForMethod(const Method: TMethodDefinition);
 var
   Rule: IRulesOnMethod;
   Lines: TStrings;
+  ClassIdx: Integer;
+  ClassDef: TClassDefinition;
 begin
   Lines := FUnitLines.GetLinesForMethod(Method);
   try
     Rule := TRulesMethodAll.Create(FOutput);
-    Rule.Process(FFilepath, nil, Method, Lines);
+
+    ClassIdx := FUnitParser.InterfaceClassList.IndexOfName(Method.InClass);
+
+    if ClassIdx <> -1 then
+      ClassDef := TClassDefinition(FUnitParser.InterfaceClassList.Objects[ClassIdx])
+    else
+      ClassDef := nil;
+
+    Rule.Process(FFilepath, ClassDef, Method, Lines)
   finally
     Lines.Free;
   end;

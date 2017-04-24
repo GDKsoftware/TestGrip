@@ -59,6 +59,8 @@ procedure TFrmUnitSearchMain.btnSearchClick(Sender: TObject);
 var
   UsedUnitSearch: TUsedUnitSearch;
 begin
+  lstSearchResults.Clear;
+
   UsedUnitSearch := TUsedUnitSearch.Create(edProject.Text);
   try
     lstSearchResults.Items.AddStrings(UsedUnitSearch.Search(edSearchUnit.Text));
