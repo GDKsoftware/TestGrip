@@ -64,20 +64,27 @@ var
   ClassIdx: Integer;
   ClassDef: TClassDefinition;
 begin
-  Lines := FUnitLines.GetLinesForMethod(Method);
   try
-    Rule := TRulesMethodAll.Create(FOutput);
+    Lines := FUnitLines.GetLinesForMethod(Method);
+    try
+      Rule := TRulesMethodAll.Create(FOutput);
 
-    ClassIdx := FUnitParser.InterfaceClassList.IndexOfName(Method.InClass);
+      ClassIdx := FUnitParser.InterfaceClassList.IndexOfName(Method.InClass);
 
-    if ClassIdx <> -1 then
-      ClassDef := TClassDefinition(FUnitParser.InterfaceClassList.Objects[ClassIdx])
-    else
-      ClassDef := nil;
+      if ClassIdx <> -1 then
+        ClassDef := TClassDefinition(FUnitParser.InterfaceClassList.Objects[ClassIdx])
+      else
+        ClassDef := nil;
 
-    Rule.Process(FFilepath, ClassDef, Method, Lines)
-  finally
-    Lines.Free;
+      Rule.Process(FFilepath, ClassDef, Method, Lines)
+    finally
+      Lines.Free;
+    end;
+  except
+    on E: Exception do
+    begin
+      raise Exception.Create(E.Message + ' (' + Method.Signature + ')');
+    end;
   end;
 end;
 
@@ -88,18 +95,25 @@ var
   ClName: string;
   Parents: string;
 begin
-  FFilepath := Filepath;
+  try
+    FFilepath := Filepath;
 
-  InitParser;
+    InitParser;
 
-  for Idx := 0 to FUnitParser.MethodList.Count - 1 do
-  begin
-    Method := TMethodDefinition(FUnitParser.MethodList[Idx]);
+    for Idx := 0 to FUnitParser.MethodList.Count - 1 do
+    begin
+      Method := TMethodDefinition(FUnitParser.MethodList[Idx]);
 
-    ClName := Method.InClass;
-    Parents := FUnitParser.InterfaceClassList.Values[ClName];
+      ClName := Method.InClass;
+      Parents := FUnitParser.InterfaceClassList.Values[ClName];
 
-    ExecuteForMethod(Method);
+      ExecuteForMethod(Method);
+    end;
+  except
+    on E: Exception do
+    begin
+      raise Exception.Create(E.Message + ' (' + Filepath + ')');
+    end;
   end;
 end;
 

@@ -25,23 +25,13 @@ uses
   StrUtils, SysUtils;
 
 constructor TUnitLines.Create(const UnitStream: TStream; const UnitParser: TUnitParser);
-var
-  Stream: TStringStream;
 begin
   FUnitParser := UnitParser;
 
   FFullListing := TStringList.Create;
 
   UnitStream.Seek(0, soBeginning);
-
-  Stream := TStringStream.Create;
-  try
-    Stream.LoadFromStream(UnitStream);
-
-    FFullListing.Text := Stream.DataString;
-  finally
-    Stream.Free;
-  end;
+  FFullListing.LoadFromStream(UnitStream);
 end;
 
 destructor TUnitLines.Destroy;
