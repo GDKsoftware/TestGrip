@@ -21,7 +21,7 @@ type
 implementation
 
 uses
-  Rules.Without, Rules.Overridden;
+  Rules.Without, Rules.Overridden, Rules.QueryStrings;
 
 constructor TRulesMethodAll.Create(const Output: IOutput);
 begin
@@ -37,8 +37,11 @@ begin
   CurrentRule.Process(Filepath, ClassDef, Method, Lines);
 
   // next...
-
   CurrentRule := TRulesOverridden.Create(FOutput);
+  CurrentRule.Process(Filepath, ClassDef, Method, Lines);
+
+  // ..
+  CurrentRule := TRulesQueryStrings.Create(FOutput);
   CurrentRule.Process(Filepath, ClassDef, Method, Lines);
 end;
 

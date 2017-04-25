@@ -78,8 +78,15 @@ procedure TWindmillPPCmdLine.RunOnUnit(const Filepath: string);
 var
   Runner: IRunner;
 begin
-  Runner := TRunnerDefault.Create(FOutput);
-  Runner.Execute(Filepath);
+  if not FileExists(FilePath) then
+  begin
+    FOutput.Warning(Filepath, 0, 'Unit doesn''t exist, but is added to dproject file');
+  end
+  else
+  begin
+    Runner := TRunnerDefault.Create(FOutput);
+    Runner.Execute(Filepath);
+  end;
 end;
 
 end.
