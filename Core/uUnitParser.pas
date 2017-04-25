@@ -356,6 +356,7 @@ var
   iRead: integer;
   block: ansistring;
   largeblock: ansistring;
+  largeblocklowercase: ansistring;
   i: integer;
   pc, pd, pp, pf: integer;
   bInParams: boolean;
@@ -400,10 +401,12 @@ begin
     begin
       iSkip := Length(largeblock);
 
-      pc := PosEx('constructor ', largeblock, Max(1, i - 11));
-      pd := PosEx('destructor ', largeblock, Max(1, i - 10));
-      pp := PosEx('procedure ', largeblock, Max(1, i - 9));
-      pf := PosEx('function ', largeblock, Max(1, i - 8));
+      largeblocklowercase := LowerCase(largeblock);
+      pc := PosEx('constructor ', largeblocklowercase, Max(1, i - 11));
+      pd := PosEx('destructor ', largeblocklowercase, Max(1, i - 10));
+      pp := PosEx('procedure ', largeblocklowercase, Max(1, i - 9));
+      pf := PosEx('function ', largeblocklowercase, Max(1, i - 8));
+      largeblocklowercase := '';
 
       if (pc > 2) and not (largeblock[pc - 1] in [#$0A,#$0D,#$07,#$20]) then
       begin
