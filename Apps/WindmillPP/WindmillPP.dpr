@@ -27,7 +27,8 @@ uses
   WindmillPP.CmdLine in 'runner\WindmillPP.CmdLine.pas',
   uUnitLines in '..\..\Core\uUnitLines.pas',
   Input.Params.CmdLine in 'input\Input.Params.CmdLine.pas',
-  Input.Params.Interfaces in 'input\Input.Params.Interfaces.pas';
+  Input.Params.Interfaces in 'input\Input.Params.Interfaces.pas',
+  Rules.QueryStrings in 'rules\Rules.QueryStrings.pas';
 
 var
   Mill: IWindmillPP;

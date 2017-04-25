@@ -34,7 +34,9 @@ uses
   Input.Params.Interfaces in 'input\Input.Params.Interfaces.pas',
   Input.Params.CmdLine in 'input\Input.Params.CmdLine.pas',
   Rules.Overridden in 'rules\Rules.Overridden.pas',
-  Rules.Overridden.Tests in 'rules\Rules.Overridden.Tests.pas';
+  Rules.Overridden.Tests in 'rules\Rules.Overridden.Tests.pas',
+  Rules.QueryStrings in 'rules\Rules.QueryStrings.pas',
+  Rules.QueryStrings.Tests in 'rules\Rules.QueryStrings.Tests.pas';
 
 type
   TTestGripExcept = class
