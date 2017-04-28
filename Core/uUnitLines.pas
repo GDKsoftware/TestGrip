@@ -47,6 +47,8 @@ end;
 destructor TUnitLines.Destroy;
 begin
   FreeAndNil(FFullListing);
+
+  inherited;
 end;
 
 function TUnitLines.GetLinesForMethod(const Method: TMethodDefinition): TStrings;
