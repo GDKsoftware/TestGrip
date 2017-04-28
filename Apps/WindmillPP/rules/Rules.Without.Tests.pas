@@ -35,6 +35,9 @@ type
 
     [Test]
     procedure Badcode;
+
+    [Test]
+    procedure Comments;
   end;
 
 implementation
@@ -90,6 +93,22 @@ begin
 
   FOutput.Setup.Expect.Never('Info');
   FOutput.Setup.Expect.Once('Warning');
+  FOutput.Setup.Expect.Never('Error');
+
+  FRulesWithout.Process(FCurrentFile, FCurrentClass, FCurrentMethod, FCurrentCode);
+
+  FOutput.Verify;
+end;
+
+procedure TRulesWithoutTests.Comments;
+begin
+  FCurrentCode.Text :=
+    'begin'#13#10 +
+    '  // something something with something'#13#10 +
+    'end;';
+
+  FOutput.Setup.Expect.Never('Info');
+  FOutput.Setup.Expect.Never('Warning');
   FOutput.Setup.Expect.Never('Error');
 
   FRulesWithout.Process(FCurrentFile, FCurrentClass, FCurrentMethod, FCurrentCode);
