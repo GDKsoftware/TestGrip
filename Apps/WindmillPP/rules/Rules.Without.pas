@@ -21,7 +21,7 @@ type
 implementation
 
 uses
-  System.StrUtils;
+  System.StrUtils, System.SysUtils;
 
 constructor TRulesWithout.Create(const Output: IOutput);
 begin
@@ -38,7 +38,7 @@ begin
   begin
     if ContainsText(Lines[Idx], 'with ') then
     begin
-      WithPos := Pos('with ', Lines[Idx]);
+      WithPos := Pos('with ', Lines[Idx].ToLower);
       CommentPos := Pos('//', Lines[Idx]);
       if (CommentPos = 0) or (CommentPos > WithPos) then
       begin

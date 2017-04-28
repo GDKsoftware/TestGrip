@@ -104,7 +104,7 @@ procedure TRulesWithoutTests.Comments;
 begin
   FCurrentCode.Text :=
     'begin'#13#10 +
-    '  // something something with something'#13#10 +
+    '  // something something With something'#13#10 +
     'end;';
 
   FOutput.Setup.Expect.Never('Info');
