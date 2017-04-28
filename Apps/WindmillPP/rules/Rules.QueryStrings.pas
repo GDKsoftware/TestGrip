@@ -68,7 +68,9 @@ end;
 
 destructor TRulesQueryStrings.Destroy;
 begin
-  FreeAndNil(FCurrentQuery)
+  FreeAndNil(FCurrentQuery);
+
+  inherited;
 end;
 
 function TRulesQueryStrings.HasSQLAssignments: Boolean;
