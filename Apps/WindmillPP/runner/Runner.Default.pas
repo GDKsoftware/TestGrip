@@ -38,12 +38,16 @@ uses
 
 constructor TRunnerDefault.Create(const Output: IOutput);
 begin
+  inherited Create;
+
   FOutput := Output;
 end;
 
 destructor TRunnerDefault.Destroy;
 begin
   FreeAndNil(FSourcecode);
+
+  inherited;
 end;
 
 procedure TRunnerDefault.InitParser;
@@ -90,16 +94,19 @@ var
 begin
   FFilepath := Filepath;
 
-  InitParser;
-
-  for Idx := 0 to FUnitParser.MethodList.Count - 1 do
+  if Filepath.EndsWith('.pas', True) or Filepath.EndsWith('.dpr', True) or Filepath.EndsWith('.dpk', True) then
   begin
-    Method := TMethodDefinition(FUnitParser.MethodList[Idx]);
+    InitParser;
 
-    ClName := Method.InClass;
-    Parents := FUnitParser.InterfaceClassList.Values[ClName];
+    for Idx := 0 to FUnitParser.MethodList.Count - 1 do
+    begin
+      Method := TMethodDefinition(FUnitParser.MethodList[Idx]);
 
-    ExecuteForMethod(Method);
+      ClName := Method.InClass;
+      Parents := FUnitParser.InterfaceClassList.Values[ClName];
+
+      ExecuteForMethod(Method);
+    end;
   end;
 end;
 

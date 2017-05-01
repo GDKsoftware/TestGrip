@@ -28,6 +28,8 @@ uses
 
 constructor TFeederProject.Create(const Projectfilepath: string);
 begin
+  inherited Create;
+
   FProjectParser := TProjectParser.Create;
   FProjectParser.ParseDProj(Projectfilepath, False);
 
@@ -39,6 +41,8 @@ end;
 destructor TFeederProject.Destroy;
 begin
   FreeAndNil(FProjectParser);
+
+  inherited;
 end;
 
 function TFeederProject.Eof: Boolean;

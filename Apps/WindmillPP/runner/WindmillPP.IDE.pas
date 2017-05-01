@@ -40,14 +40,17 @@ begin
   IDEProject := ToolsAPI.GetActiveProject;
   if Assigned(IDEProject) then
   begin
-    ProjectFilepath := TPath.GetFullPath(IDEProject.FileName);
-
-    Feeder := TFeederProject.Create(ProjectFilepath);
-    while not Feeder.Eof do
+    if IDEProject.FileName.EndsWith('.dproj', True) then
     begin
-      Filepath := Feeder.NextFile;
+      ProjectFilepath := TPath.GetFullPath(IDEProject.FileName);
 
-      Runner.Execute(Filepath);
+      Feeder := TFeederProject.Create(ProjectFilepath);
+      while not Feeder.Eof do
+      begin
+        Filepath := Feeder.NextFile;
+
+        Runner.Execute(Filepath);
+      end;
     end;
   end;
 end;

@@ -44,6 +44,8 @@ end;
 
 function TUTF8EncodingWithoutBOM.GetPreamble: TBytes;
 begin
+  // don't use result := inherited; here
+
   SetLength(Result, 0);
 end;
 

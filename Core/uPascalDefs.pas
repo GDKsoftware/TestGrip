@@ -709,6 +709,8 @@ procedure TPropertyDefinition.ParseRawDefinition;
 var
   p1, p2, p3: integer;
 begin
+  // different implementation from inherited;
+
   p1 := Pos( 'property ', FRawDefinition );
   if (p1 <> 0) then
   begin
@@ -871,6 +873,8 @@ destructor TClassDefinition.Destroy;
 begin
   FreeAndNil(FInherits);
   FreeAndNil(FAnnotations);
+
+  inherited;
 end;
 
 function TClassDefinition.HasAnnotation(const AAnnotation: string): Boolean;
