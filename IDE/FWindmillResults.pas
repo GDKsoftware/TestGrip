@@ -72,13 +72,7 @@ uses
 
 procedure TWindmillIdeNotifier.AfterCompile(Succeeded: Boolean);
 begin
-  if Succeeded then
-  begin
-    if Assigned(EmbeddedFrmWindmillResults) then
-    begin
-      EmbeddedFrmWindmillResults.tmrScan.Enabled := True;
-    end;
-  end;
+
 end;
 
 procedure TWindmillIdeNotifier.BeforeCompile(const Project: IOTAProject; var Cancel: Boolean);
