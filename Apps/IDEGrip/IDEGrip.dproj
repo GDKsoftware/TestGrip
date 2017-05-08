@@ -1,9 +1,9 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{224B8F28-CCA3-4F18-A6F8-0FF820D155BC}</ProjectGuid>
-        <MainSource>WindmillPlugin.dpk</MainSource>
+        <ProjectGuid>{0E06B36F-C7DE-4A8E-84AD-30A81CBF65B2}</ProjectGuid>
+        <MainSource>IDEGrip.dpk</MainSource>
         <ProjectVersion>18.2</ProjectVersion>
-        <FrameworkType>VCL</FrameworkType>
+        <FrameworkType>None</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -44,9 +44,9 @@
         <DCC_K>false</DCC_K>
         <GenDll>true</GenDll>
         <GenPackage>true</GenPackage>
-        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
-        <SanitizedProjectName>WindmillPlugin</SanitizedProjectName>
+        <SanitizedProjectName>IDEGrip</SanitizedProjectName>
         <DesignOnlyPackage>true</DesignOnlyPackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
@@ -68,6 +68,7 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_Namespace>VCL;$(DCC_Namespace)</DCC_Namespace>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -80,23 +81,10 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="designide.dcp"/>
+        <DCCReference Include="TestgripCore.dcp"/>
         <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="TestGripCore.dcp"/>
-        <DCCReference Include="..\WindmillPP\runner\Runner.Default.pas"/>
-        <DCCReference Include="..\WindmillPP\runner\Runner.Interfaces.pas"/>
-        <DCCReference Include="..\WindmillPP\runner\WindmillPP.IDE.pas"/>
-        <DCCReference Include="..\WindmillPP\feeder\Feeder.Interfaces.pas"/>
-        <DCCReference Include="..\WindmillPP\feeder\Feeder.Project.pas"/>
-        <DCCReference Include="..\WindmillPP\output\Output.Interfaces.pas"/>
-        <DCCReference Include="..\WindmillPP\output\Output.Treeview.pas"/>
-        <DCCReference Include="..\WindmillPP\rules\Rules.Interfaces.pas"/>
-        <DCCReference Include="..\WindmillPP\rules\Rules.Method.All.pas"/>
-        <DCCReference Include="..\WindmillPP\rules\Rules.Overridden.pas"/>
-        <DCCReference Include="..\WindmillPP\rules\Rules.QueryStrings.pas"/>
-        <DCCReference Include="..\WindmillPP\rules\Rules.Without.pas"/>
-        <DCCReference Include="..\..\IDE\FWindmillResults.pas">
-            <Form>FrmWindmillResults</Form>
-        </DCCReference>
+        <DCCReference Include="IDEGripBindings.pas"/>
+        <DCCReference Include="IDEGripActions.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -115,10 +103,11 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">WindmillPlugin.dpk</Source>
+                    <Source Name="MainSource">IDEGrip.dpk</Source>
                 </Source>
             </Delphi.Personality>
             <Platforms>
+                <Platform value="Linux64">False</Platform>
                 <Platform value="Win32">True</Platform>
             </Platforms>
         </BorlandProject>

@@ -1,0 +1,52 @@
+package TestgripCore;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'TestGrip Core functionality'}
+{$RUNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl,
+  vcl,
+  xmlrtl,
+  DesignIDE;
+
+contains
+  uCodeHelpers in '..\..\Core\uCodeHelpers.pas',
+  uDefinitionSearch in '..\..\Core\uDefinitionSearch.pas',
+  uPascalDefs in '..\..\Core\uPascalDefs.pas',
+  uProjectParser in '..\..\Core\uProjectParser.pas',
+  uUnitLines in '..\..\Core\uUnitLines.pas',
+  uUnitParser in '..\..\Core\uUnitParser.pas',
+  uUsedUnitSearch in '..\..\Core\uUsedUnitSearch.pas',
+  uCommonFunctions in '..\..\Shared\uCommonFunctions.pas',
+  uD7Functions in '..\..\Shared\uD7Functions.pas',
+  uUTF8Functions in '..\..\Shared\uUTF8Functions.pas',
+  uXmlFuncs in '..\..\Shared\uXmlFuncs.pas',
+  uIdeHelper in '..\..\IDE\uIdeHelper.pas';
+
+end.

@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{224B8F28-CCA3-4F18-A6F8-0FF820D155BC}</ProjectGuid>
-        <MainSource>WindmillPlugin.dpk</MainSource>
+        <ProjectGuid>{ECD507DF-3077-4B8A-8F7B-4904789ECCD3}</ProjectGuid>
+        <MainSource>TestgripCore.dpk</MainSource>
         <ProjectVersion>18.2</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
@@ -46,15 +46,14 @@
         <GenPackage>true</GenPackage>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
-        <SanitizedProjectName>WindmillPlugin</SanitizedProjectName>
-        <DesignOnlyPackage>true</DesignOnlyPackage>
+        <SanitizedProjectName>TestgripCore</SanitizedProjectName>
+        <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_UsePackage>rtl;TestgripCore;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -68,6 +67,7 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_Description>TestGrip Core functionality</DCC_Description>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -79,24 +79,22 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="designide.dcp"/>
         <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="TestGripCore.dcp"/>
-        <DCCReference Include="..\WindmillPP\runner\Runner.Default.pas"/>
-        <DCCReference Include="..\WindmillPP\runner\Runner.Interfaces.pas"/>
-        <DCCReference Include="..\WindmillPP\runner\WindmillPP.IDE.pas"/>
-        <DCCReference Include="..\WindmillPP\feeder\Feeder.Interfaces.pas"/>
-        <DCCReference Include="..\WindmillPP\feeder\Feeder.Project.pas"/>
-        <DCCReference Include="..\WindmillPP\output\Output.Interfaces.pas"/>
-        <DCCReference Include="..\WindmillPP\output\Output.Treeview.pas"/>
-        <DCCReference Include="..\WindmillPP\rules\Rules.Interfaces.pas"/>
-        <DCCReference Include="..\WindmillPP\rules\Rules.Method.All.pas"/>
-        <DCCReference Include="..\WindmillPP\rules\Rules.Overridden.pas"/>
-        <DCCReference Include="..\WindmillPP\rules\Rules.QueryStrings.pas"/>
-        <DCCReference Include="..\WindmillPP\rules\Rules.Without.pas"/>
-        <DCCReference Include="..\..\IDE\FWindmillResults.pas">
-            <Form>FrmWindmillResults</Form>
-        </DCCReference>
+        <DCCReference Include="vcl.dcp"/>
+        <DCCReference Include="xmlrtl.dcp"/>
+        <DCCReference Include="DesignIDE.dcp"/>
+        <DCCReference Include="..\..\Core\uCodeHelpers.pas"/>
+        <DCCReference Include="..\..\Core\uDefinitionSearch.pas"/>
+        <DCCReference Include="..\..\Core\uPascalDefs.pas"/>
+        <DCCReference Include="..\..\Core\uProjectParser.pas"/>
+        <DCCReference Include="..\..\Core\uUnitLines.pas"/>
+        <DCCReference Include="..\..\Core\uUnitParser.pas"/>
+        <DCCReference Include="..\..\Core\uUsedUnitSearch.pas"/>
+        <DCCReference Include="..\..\Shared\uCommonFunctions.pas"/>
+        <DCCReference Include="..\..\Shared\uD7Functions.pas"/>
+        <DCCReference Include="..\..\Shared\uUTF8Functions.pas"/>
+        <DCCReference Include="..\..\Shared\uXmlFuncs.pas"/>
+        <DCCReference Include="..\..\IDE\uIdeHelper.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -115,7 +113,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">WindmillPlugin.dpk</Source>
+                    <Source Name="MainSource">TestgripCore.dpk</Source>
                 </Source>
             </Delphi.Personality>
             <Platforms>

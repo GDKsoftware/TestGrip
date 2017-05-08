@@ -12,7 +12,6 @@ object GDC_frmPropertyEditor: TGDC_frmPropertyEditor
   Font.Style = []
   OldCreateOrder = False
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
@@ -45,6 +44,7 @@ object GDC_frmPropertyEditor: TGDC_frmPropertyEditor
         Left = 0
         Top = 0
         Width = 233
+        Height = 29
         AutoSize = True
         ButtonHeight = 32
         ButtonWidth = 31
@@ -93,7 +93,7 @@ object GDC_frmPropertyEditor: TGDC_frmPropertyEditor
         object tbGenOver: TToolButton
           Left = 201
           Top = 0
-          Action = acGenerateOverrides
+          Caption = 'acGenerateOverrides'
         end
       end
     end
@@ -241,11 +241,6 @@ object GDC_frmPropertyEditor: TGDC_frmPropertyEditor
       Caption = 'Test all files in project'
       OnExecute = acRunAllTestsExecute
     end
-    object acGenerateOverrides: TAction
-      Caption = 'acGenerateOverrides'
-      ShortCut = 49223
-      OnExecute = acGenerateOverridesExecute
-    end
   end
   object ImageList1: TImageList
     BlendColor = clBtnFace
@@ -253,7 +248,7 @@ object GDC_frmPropertyEditor: TGDC_frmPropertyEditor
     Left = 192
     Top = 40
     Bitmap = {
-      494C010106000900500010001000F0F0F000FF10FFFFFFFFFFFFFFFF424D3600
+      494C010106000900640010001000F0F0F000FF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       000000000000000000000000000000000000F7F7F700F7F7F700F7F7F700F7F7
       F700F7F7F700A5A6A500A5A6A500A5A6A500F7F7F700A5A6A500A5A6A500A5A6
