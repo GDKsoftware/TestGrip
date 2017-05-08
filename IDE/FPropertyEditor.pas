@@ -9,7 +9,7 @@ uses
   ActnList, ActnMan, ToolWin, ActnCtrls,
   ActnMenus, ImgList, XPStyleActnCtrls, GDCVirtualTrees, Buttons, ToolsApi,uTestGen, FMultitestEdit, XPMan,
   FShowTestResults, FInputTest, Contnrs, uProjectParser, uBuildOutputParser, uUnitParser,
-  uDefinitionSearch;
+  uDefinitionSearch, System.ImageList, System.Actions;
 
 var
   NotifierIndex: Integer;
@@ -91,7 +91,6 @@ type
     miPopTest_JumpToFunction: TMenuItem;
     miShowlatesttestresultFunc: TMenuItem;
     tbWarnings: TToolButton;
-    acGenerateOverrides: TAction;
     tbGenOver: TToolButton;
     miGenerateCodeForClass: TMenuItem;
     miGenerateCodeForFunction: TMenuItem;
@@ -120,13 +119,11 @@ type
     procedure miPopTest_ShowLatestTestResultClick(Sender: TObject);
     procedure acRunAllTestsExecute(Sender: TObject);
     procedure miRenameFunctionClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure miPopTest_CopyTestClick(Sender: TObject);
     procedure GCTimerTimer(Sender: TObject);
     procedure miJumpToFunctionClick(Sender: TObject);
     procedure miPopTest_JumpToFunctionClick(Sender: TObject);
     procedure miShowlatesttestresultFuncClick(Sender: TObject);
-    procedure acGenerateOverridesExecute(Sender: TObject);
     procedure miGenerateCodeForFunctionClick(Sender: TObject);
   private
     CurrentFile: string;
@@ -136,8 +133,6 @@ type
     miToggleExceptionHandling: TMenuItem;
     miToggleUseDUnit: TMenuItem;
     miToggleUseDUnitX: TMenuItem;
-
-    FDefinitionSearch: TDefinitionSearch;
 
     procedure Treeview1MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure TreeView1DblClick(Sender: TObject);
@@ -218,7 +213,6 @@ type
     procedure AddTestNodesToFunctionNode(var NodeData: PTreeData; InputTestFunction: TInputFunction; NodeFunctions: PVirtualNode);
     procedure AddTestFunctionNodesToClassNode(t: TInputFunction; var NodeData: PTreeData; InputTestClass: TInputTestClass; NodeClass: PVirtualNode);
     procedure ShowBuildError;
-    procedure InitDefinitionSearch(sProjectFile: string);
     procedure AddTestgripMenusToIDE(const AINTAServices: INTAServices);
     procedure RemoveTestgripMenusFromIDE(const AINTAServices: INTAServices);
     procedure SetInfoForMethod(const AMethodDefinition: TMethodDefinition);
@@ -559,37 +553,6 @@ begin
   if GetActiveProject <> nil then
   begin
     DeleteSelectedTest;
-  end;
-end;
-
-procedure TGDC_frmPropertyEditor.acGenerateOverridesExecute(Sender: TObject);
-var
-  sProjectFile: string;
-  sSearchFor: string;
-  sCode: string;
-  sCurrentUnitname: string;
-begin
-  // preparation to get the right projectfile and search starting
-  sProjectFile := GetActiveProject.FileName;
-
-  InitDefinitionSearch(sProjectFile);
-
-  // find out select class/interface name
-  sSearchFor := TIDEHelper.GetWordUnderCaret;
-
-  sCurrentUnitname := TIDEHelper.GetCurrentUnitName;
-
-  // to clipboard
-  sCode := TCodeHelperA.GetInterfaceMethodDefinitions(FDefinitionSearch, sCurrentUnitname, sSearchFor);
-  clipboard.AsText := sCode;
-
-  if sCode <> '' then
-  begin
-    TIDEHelper.AddDelphiMessage('Copied interface methods for ' + sSearchFor + ' to clipboard');
-  end
-  else
-  begin
-    TIDEHelper.AddDelphiMessage('Interface methods for ' + sSearchFor + ' not found');
   end;
 end;
 
@@ -1193,13 +1156,6 @@ end;
 procedure TGDC_frmPropertyEditor.FormCreate(Sender: TObject);
 begin
   tmrInit.Enabled := True;
-
-  FDefinitionSearch := nil;
-end;
-
-procedure TGDC_frmPropertyEditor.FormDestroy(Sender: TObject);
-begin
-  FreeAndNil(FDefinitionSearch);
 end;
 
 procedure TGDC_frmPropertyEditor.FormResize(Sender: TObject);
@@ -1359,22 +1315,6 @@ begin
     (BorlandIDEServices As IOTAKeyboardServices).RemoveKeyboardBinding(iKeyBindingIndex);
 end;
 
-procedure TGDC_frmPropertyEditor.InitDefinitionSearch(sProjectFile: string);
-begin
-  if Assigned(FDefinitionSearch) then
-  begin
-    if FDefinitionSearch.ProjectFile <> sProjectFile then
-    begin
-      FreeAndNil(FDefinitionSearch);
-    end;
-  end;
-
-  if not Assigned(FDefinitionSearch) then
-  begin
-    FDefinitionSearch := TDefinitionSearch.Create(sProjectFile);
-  end;
-end;
-
 procedure TGDC_frmPropertyEditor.ShowBuildError;
 var
   frmCode: TfrmShowTestcode;
@@ -1503,33 +1443,19 @@ begin
 end;
 
 procedure TGDC_frmPropertyEditor.ListAllFilesInIDE(const AProject: IOTAProject; const AFiles: TStrings);
+{$if CompilerVersion < 21}
 var
   i, c: Integer;
+{$endif}
 begin
-  {$ifdef VER200}
-    c := AProject.GetModuleCount - 1;
-    for i := 0 to c do
-    begin
-      AFiles.Add(AProject.GetModule(i).FileName);
-    end;
+  {$if CompilerVersion < 21}
+  c := AProject.GetModuleCount - 1;
+  for i := 0 to c do
+  begin
+    AFiles.Add(AProject.GetModule(i).FileName);
+  end;
   {$else}
-    {$ifdef VER180}
-      c := AProject.GetModuleCount - 1;
-      for i := 0 to c do
-      begin
-        AFiles.Add(AProject.GetModule(i).FileName);
-      end;
-    {$else}
-      {$ifdef VER150}
-        c := AProject.GetModuleCount - 1;
-        for i := 0 to c do
-        begin
-          AFiles.Add(AProject.GetModule(i).FileName);
-        end;
-      {$else}
-        AProject.GetCompleteFileList(AFiles);
-      {$endif}
-    {$endif}
+  AProject.GetCompleteFileList(AFiles);
   {$endif}
 end;
 
@@ -2546,11 +2472,6 @@ begin
   begin
     GDC_frmPropertyEditor.acAddTest.Execute;
     BindingResult := krHandled;
-  end
-  else if KeyCode = TextToShortCut('Ctrl+Alt+G') then
-  begin
-    GDC_frmPropertyEditor.acGenerateOverrides.Execute;
-    BindingResult := krHandled;
   end;
 end;
 
@@ -2559,8 +2480,6 @@ procedure TKeyboardBinding.BindKeyboard(
 begin
   BindingServices.AddKeyBinding([TextToShortcut('Ctrl+Alt+R')], AddBreakpoint, Nil);
   BindingServices.AddKeyBinding([TextToShortcut('Ctrl+Alt+T')], AddBreakpoint, Nil);
-
-  BindingServices.AddKeyBinding([TextToShortcut('Ctrl+Alt+G')], AddBreakpoint, Nil);
 end;
 
 function TKeyboardBinding.GetBindingType: TBindingType;

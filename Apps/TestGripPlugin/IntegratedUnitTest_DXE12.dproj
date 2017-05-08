@@ -52,7 +52,7 @@
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=2.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=2.0.0.0;Comments=;CFBundleName=;CFBundleDisplayName=;UIDeviceFamily=;CFBundleIdentifier=;CFBundleVersion=;CFBundlePackageType=;CFBundleSignature=;CFBundleAllowMixedLocalizations=;UISupportedInterfaceOrientations=;CFBundleExecutable=;CFBundleResourceSpecification=;LSRequiresIPhoneOS=;CFBundleInfoDictionaryVersion=;CFBundleDevelopmentRegion=;package=;label=;versionCode=;versionName=;persistent=;restoreAnyVersion=;installLocation=;largeHeap=;theme=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <DCC_UsePackage>rtl;dbrtl;vcldb;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>rtl;dbrtl;vcldb;TestgripCore;$(DCC_UsePackage)</DCC_UsePackage>
         <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
@@ -83,14 +83,12 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vcldb.dcp"/>
         <DCCReference Include="dbrtl.dcp"/>
+        <DCCReference Include="TestGripCore.dcp"/>
         <DCCReference Include="..\..\IDE\FPropertyEditor.pas">
             <Form>frmPropertyEditor</Form>
         </DCCReference>
-        <DCCReference Include="..\..\Shared\uXmlFuncs.pas"/>
-        <DCCReference Include="..\..\Core\uPascalDefs.pas"/>
         <DCCReference Include="..\..\Definition\uInputParser.pas"/>
         <DCCReference Include="..\..\Definition\uTestDefs.pas"/>
-        <DCCReference Include="..\..\Core\uUnitParser.pas"/>
         <DCCReference Include="..\..\IDE\uSplashRegister.pas"/>
         <DCCReference Include="..\..\IDE\uIdeEditorManager.pas"/>
         <DCCReference Include="..\..\IDE\FInputTest.pas">
@@ -111,7 +109,6 @@
         <DCCReference Include="..\..\IDE\FShowTestCode.pas">
             <Form>frmShowTestcode</Form>
         </DCCReference>
-        <DCCReference Include="..\..\Core\uProjectParser.pas"/>
         <DCCReference Include="..\..\thirdparty\virtual treeview\Source\GDCVirtualTrees.pas"/>
         <DCCReference Include="..\..\thirdparty\virtual treeview\Source\GDCVTAccessibility.pas"/>
         <DCCReference Include="..\..\thirdparty\virtual treeview\Source\GDCVTAccessibilityFactory.pas"/>
@@ -175,7 +172,6 @@
         <DCCReference Include="..\..\thirdparty\SynEdit\Source\GDCSynTextDrawer.pas"/>
         <DCCReference Include="..\..\thirdparty\SynEdit\Source\GDCSynUnicode.pas"/>
         <DCCReference Include="..\..\thirdparty\SynEdit\Source\GDCSynURIOpener.pas"/>
-        <DCCReference Include="..\..\Shared\uUTF8Functions.pas"/>
         <DCCReference Include="..\..\IDE\FShowTestResults.pas">
             <Form>frmShowTestresults</Form>
         </DCCReference>
@@ -187,14 +183,9 @@
             <Form>frmRename</Form>
         </DCCReference>
         <DCCReference Include="..\..\IDE\uTestgripUIFuncs.pas"/>
-        <DCCReference Include="..\..\Shared\uD7Functions.pas"/>
         <DCCReference Include="..\..\IDE\uHelp.pas"/>
         <DCCReference Include="..\..\Generation\uTestgripInstall.pas"/>
         <DCCReference Include="..\..\Execution\uBuildOutputParser.pas"/>
-        <DCCReference Include="..\..\Core\uCodeHelpers.pas"/>
-        <DCCReference Include="..\..\Core\uDefinitionSearch.pas"/>
-        <DCCReference Include="..\..\IDE\uIdeHelper.pas"/>
-        <DCCReference Include="..\..\Shared\uCommonFunctions.pas"/>
         <DCCReference Include="..\..\Generation\uDUnitTestGen.pas"/>
         <DCCReference Include="..\..\Generation\uDUnitXTestGen.pas"/>
         <DCCReference Include="..\..\Generation\uUnitTestGenBase.pas"/>

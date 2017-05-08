@@ -234,7 +234,7 @@ type
     ['{B86273FF-00D0-48D5-8EFB-96EF9485DC77}']
 
     procedure OpenProject(const AFilename: string; const ANewGroup: Boolean);
-    procedure OpenFile(const AFilename: string);
+    function OpenFile(const AFilename: string): Boolean;
     procedure SaveFile(const AFilename: string);
   end;
 
@@ -245,7 +245,8 @@ type
   
   TBorlandIDEServices = class(TInterfacedPersistent, ICustomIDEServices, IOTAEditorServices, IOTAMessageServices, IOTAKeyboardServices, INTAServices, IOTAServices, IOTAActionServices)
   private
-    procedure OpenFileInEditor(const AFilename: string);
+    function OpenFileInEditor(const AFilename: string): Boolean;
+    function FindTab(const ATabName: string): TTabSheet;
   protected
     FActiveProjectGroup: IOTAProjectGroup;
     FOTAKeyBindingServices: IOTAKeyBindingServices;
@@ -261,7 +262,7 @@ type
     function GetActiveGroup: IOTAProjectGroup;
 
     procedure OpenProject(const AFilename: string; const ANewGroup: Boolean);
-    procedure OpenFile(const AFilename: string);
+    function OpenFile(const AFilename: string): Boolean;
     procedure SaveFile(const AFilename: string);
 
     function TopView: IOTAEditView;
@@ -325,7 +326,7 @@ end;
 
 procedure TBorlandIDEServices.AddTitleMessage(const AText: AnsiString);
 begin
-  AddWideTitleMessage(AText);
+  AddWideTitleMessage(String(AText));
 end;
 
 procedure TBorlandIDEServices.AddWideTitleMessage(const AText: string);
@@ -405,16 +406,18 @@ begin
   end;
 end;
 
-procedure TBorlandIDEServices.OpenFile(const AFilename: string);
+function TBorlandIDEServices.OpenFile(const AFilename: string): Boolean;
 begin
   if SameText(ExtractFileExt(AFilename), '.dproj') then
   begin
     FActiveProjectGroup := TOTAProjectGroup.Create;
     FActiveProjectGroup.AddExistingProject(AFilename);
+
+    Result := True;
   end
   else
   begin
-    OpenFileInEditor(AFilename);
+    Result := OpenFileInEditor(AFilename);
   end;
 end;
 
@@ -453,31 +456,61 @@ begin
 
 end;
 
-procedure TBorlandIDEServices.OpenFileInEditor(const AFilename: string);
+function TBorlandIDEServices.FindTab(const ATabName: string): TTabSheet;
+var
+  Idx: Integer;
+begin
+  Result := nil;
+
+  for Idx := 0 to Editors.PageCount -1 do
+  begin
+    if SameText(Editors.Pages[Idx].Caption, ATabName) then
+    begin
+      Result := Editors.Pages[Idx];
+      Exit;
+    end;
+  end;
+end;
+
+function TBorlandIDEServices.OpenFileInEditor(const AFilename: string): Boolean;
 var
   PC: TPageControl;
   Tab: TTabSheet;
   Editor: TSynEdit;
   Highlighter: TSynPasSyn;
 begin
+  Result := False;
+
   PC := Editors;
   if Assigned(PC) then
   begin
-    Tab := TTabSheet.Create(Editors);
-    Tab.Caption := TabNameForFile(AFilename);
-    Tab.PageControl := PC;
-    
-    Editor := TSynEdit.Create(Tab);
-    Editor.Parent := Tab;
-    Editor.Align := TAlign.alClient;
-    Editor.Options := Editor.Options + [eoTabsToSpaces, eoTabIndent, eoTrimTrailingSpaces, eoEnhanceEndKey, eoEnhanceHomeKey];
+    Tab := FindTab(TabNameForFile(AFilename));
+    if not Assigned(Tab) then
+    begin
+      Tab := TTabSheet.Create(Editors);
+      Tab.Caption := TabNameForFile(AFilename);
+      Tab.PageControl := PC;
 
-    Highlighter := TSynPasSyn.Create(Tab);
-    Editor.Highlighter := Highlighter;
-    
-    Tab.Tag := NativeInt(TOTAEditBuffer.Create(Tab, AFileName));
-    
-    Editor.Lines.LoadFromFile(AFilename);
+      Editor := TSynEdit.Create(Tab);
+      Editor.Parent := Tab;
+      Editor.Align := TAlign.alClient;
+      Editor.Options := Editor.Options + [eoTabsToSpaces, eoTabIndent, eoTrimTrailingSpaces, eoEnhanceEndKey, eoEnhanceHomeKey];
+
+      Highlighter := TSynPasSyn.Create(Tab);
+      Editor.Highlighter := Highlighter;
+
+      Tab.Tag := NativeInt(TOTAEditBuffer.Create(Tab, AFileName));
+
+      PC.ActivePage := Tab;
+
+      Editor.Lines.LoadFromFile(AFilename);
+    end
+    else
+    begin
+      PC.ActivePage := Tab;
+    end;
+
+    Result := True;
   end;
 end;
 
@@ -532,7 +565,6 @@ end;
 
 function TBorlandIDEServices.TopView: IOTAEditView;
 var
-  I, C: Integer;
   PC: TPageControl;
 begin
   Result := nil;
@@ -781,7 +813,7 @@ end;
 procedure TOTAKeyBindingServices.AddKeyBinding(const AKeys: array of Word; const AKeyProc: TKeyBindingProc;
   const AContext: Pointer; const AFlags: Integer; const AKeyboard, AMenuItemName: string);
 var
-  I, C: Integer;
+  I: Integer;
 begin
   for I := Low(AKeys) to High(AKeys) do
   begin
@@ -793,4 +825,5 @@ initialization
   BorlandIDEServices := TBorlandIDEServices.Create;
 
 end.
+
 
