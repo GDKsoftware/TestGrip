@@ -27,6 +27,7 @@ Older Delphi versions still need some additional testing and will be added soon.
 * Delphi Berlin
 * Delphi Seattle
 * Delphi Seattle Trial (cannot build or run tests)
-* Delphi 7 (TestGripTester commandline tool only)
-* Delphi 2007
+* Delphi XE8
 * Delphi 2009
+* Delphi 2007
+* Delphi 7 (TestGripTester commandline tool only)
