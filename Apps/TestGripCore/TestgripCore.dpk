@@ -26,7 +26,6 @@ package TestgripCore;
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'TestGrip Core functionality'}
-{$RUNONLY}
 {$IMPLICITBUILD ON}
 
 requires

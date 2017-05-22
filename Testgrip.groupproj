@@ -33,9 +33,6 @@
         <Projects Include="Apps\install\Demoproject\TheWorld.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Apps\install\Demoproject\Demo2.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="Apps\WindmillPlugin\WindmillPlugin.dproj">
             <Dependencies/>
         </Projects>
@@ -143,15 +140,6 @@
     <Target Name="TheWorld:Make">
         <MSBuild Projects="Apps\install\Demoproject\TheWorld.dproj" Targets="Make"/>
     </Target>
-    <Target Name="Demo2">
-        <MSBuild Projects="Apps\install\Demoproject\Demo2.dproj"/>
-    </Target>
-    <Target Name="Demo2:Clean">
-        <MSBuild Projects="Apps\install\Demoproject\Demo2.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="Demo2:Make">
-        <MSBuild Projects="Apps\install\Demoproject\Demo2.dproj" Targets="Make"/>
-    </Target>
     <Target Name="WindmillPlugin">
         <MSBuild Projects="Apps\WindmillPlugin\WindmillPlugin.dproj"/>
     </Target>
@@ -180,13 +168,13 @@
         <MSBuild Projects="Apps\IDEGrip\IDEGrip.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="TestgripProjectTester_DXE12;IntegratedUnitTest_DXE12;TestIDE;UnitBrowser;UnitSearch;impgen;XDataAPIDocGen;WindmillPP;WindmillUnitTests;TheWorld;Demo2;WindmillPlugin;TestgripCore;IDEGrip"/>
+        <CallTarget Targets="TestgripProjectTester_DXE12;IntegratedUnitTest_DXE12;TestIDE;UnitBrowser;UnitSearch;impgen;XDataAPIDocGen;WindmillPP;WindmillUnitTests;TheWorld;WindmillPlugin;TestgripCore;IDEGrip"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TestgripProjectTester_DXE12:Clean;IntegratedUnitTest_DXE12:Clean;TestIDE:Clean;UnitBrowser:Clean;UnitSearch:Clean;impgen:Clean;XDataAPIDocGen:Clean;WindmillPP:Clean;WindmillUnitTests:Clean;TheWorld:Clean;Demo2:Clean;WindmillPlugin:Clean;TestgripCore:Clean;IDEGrip:Clean"/>
+        <CallTarget Targets="TestgripProjectTester_DXE12:Clean;IntegratedUnitTest_DXE12:Clean;TestIDE:Clean;UnitBrowser:Clean;UnitSearch:Clean;impgen:Clean;XDataAPIDocGen:Clean;WindmillPP:Clean;WindmillUnitTests:Clean;TheWorld:Clean;WindmillPlugin:Clean;TestgripCore:Clean;IDEGrip:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TestgripProjectTester_DXE12:Make;IntegratedUnitTest_DXE12:Make;TestIDE:Make;UnitBrowser:Make;UnitSearch:Make;impgen:Make;XDataAPIDocGen:Make;WindmillPP:Make;WindmillUnitTests:Make;TheWorld:Make;Demo2:Make;WindmillPlugin:Make;TestgripCore:Make;IDEGrip:Make"/>
+        <CallTarget Targets="TestgripProjectTester_DXE12:Make;IntegratedUnitTest_DXE12:Make;TestIDE:Make;UnitBrowser:Make;UnitSearch:Make;impgen:Make;XDataAPIDocGen:Make;WindmillPP:Make;WindmillUnitTests:Make;TheWorld:Make;WindmillPlugin:Make;TestgripCore:Make;IDEGrip:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
