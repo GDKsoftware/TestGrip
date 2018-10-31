@@ -66,11 +66,18 @@ procedure TWindmillPPCmdLine.RunOnProject;
 var
   FileFeeder: IFeeder;
 begin
-  FileFeeder := TFeederProject.Create(FProjectFilepath);
-
-  while not FileFeeder.Eof do
+  if FProjectFilepath.EndsWith('.pas', True) then
   begin
-    RunOnUnit(FileFeeder.NextFile);
+    RunOnUnit(FProjectFilepath);
+  end
+  else
+  begin
+    FileFeeder := TFeederProject.Create(FProjectFilepath);
+
+    while not FileFeeder.Eof do
+    begin
+      RunOnUnit(FileFeeder.NextFile);
+    end;
   end;
 end;
 
