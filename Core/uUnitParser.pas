@@ -93,6 +93,11 @@ type
     property InterfaceClassList: TStrings
       read FInterfaceClassList;
 
+    property OuterUsesBoundaries: TFileBoundary
+      read FOuterUsesBoundaries;
+    property InnerUsesBoundaries: TFileBoundary
+      read FInnerUsesBoundaries;
+
     constructor Create;
     destructor Destroy; override;
 

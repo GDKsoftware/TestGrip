@@ -119,8 +119,15 @@ begin
 
   RefreshTree;
 
-  edInnerUses.Text := FParser.InnerUsesList.Text;
-  edOuterUses.Text := FParser.OuterUsesList.Text;
+  if FParser.InnerUsesBoundaries.Start <> FParser.InnerUsesBoundaries.Stop then
+    edInnerUses.Text := FParser.InnerUsesList.Text
+  else
+    edInnerUses.Text := 'No inner uses found';
+
+  if FParser.OuterUsesBoundaries.Start <> FParser.OuterUsesBoundaries.Stop then
+    edOuterUses.Text := FParser.OuterUsesList.Text
+  else
+    edOuterUses.Text := 'No outer uses found';
 end;
 
 procedure TFrmUnitBrowserMain.RefreshTree;
