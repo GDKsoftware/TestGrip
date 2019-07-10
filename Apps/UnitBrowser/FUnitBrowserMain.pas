@@ -5,11 +5,14 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, ComCtrls, ShellAPI, uUnitParser, uPascalDefs,
-  Contnrs;
+  Contnrs, ExtCtrls, StdCtrls;
 
 type
   TFrmUnitBrowserMain = class(TForm)
     treeMain: TTreeView;
+    pnlUses: TPanel;
+    edInnerUses: TMemo;
+    edOuterUses: TMemo;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
@@ -115,6 +118,9 @@ begin
   end;
 
   RefreshTree;
+
+  edInnerUses.Text := FParser.InnerUsesList.Text;
+  edOuterUses.Text := FParser.OuterUsesList.Text;
 end;
 
 procedure TFrmUnitBrowserMain.RefreshTree;
