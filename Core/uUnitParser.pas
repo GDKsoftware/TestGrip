@@ -40,6 +40,9 @@ type
     FOuterUsesBoundaries: TFileBoundary;
     FInnerUsesBoundaries: TFileBoundary;
 
+    function GetHasOuterUses: Boolean;
+    function GetHasInnerUses: Boolean;
+
     function ReadLoopUntilSemiColon(const sIn: ansistring; iStart: integer; var sOut: string): boolean;
 
     procedure ParseUsesList( const lstIn: TStrings; const lstOut: TStrings; bIsDkp: boolean = False );
@@ -97,6 +100,11 @@ type
       read FOuterUsesBoundaries;
     property InnerUsesBoundaries: TFileBoundary
       read FInnerUsesBoundaries;
+
+    property HasOuterUses: Boolean
+      read GetHasOuterUses;
+    property HasInnerUses: Boolean
+      read GetHasInnerUses;
 
     constructor Create;
     destructor Destroy; override;
@@ -1534,6 +1542,16 @@ begin
   begin
     sOut := sOut + Copy(sIn, StartIdx);
   end;
+end;
+
+function TUnitParser.GetHasOuterUses: Boolean;
+begin
+  Result := FOuterUsesBoundaries.Start <> FOuterUsesBoundaries.Stop;
+end;
+
+function TUnitParser.GetHasInnerUses: Boolean;
+begin
+  Result := FInnerUsesBoundaries.Start <> FInnerUsesBoundaries.Stop
 end;
 
 //----------
