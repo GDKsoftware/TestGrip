@@ -344,6 +344,9 @@ begin
 
   FreeAndNil(FNonPrivateMethods);
 
+  for Idx := 0 to FInterfaceClassList.Count - 1 do
+    FInterfaceClassList.Objects[Idx].Free;
+
   FreeAndNil(FInterfaceClassList);
 
   FreeAndNil(FInitCode);
