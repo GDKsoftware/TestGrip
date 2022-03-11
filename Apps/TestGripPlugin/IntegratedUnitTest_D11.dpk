@@ -1,0 +1,124 @@
+package IntegratedUnitTest_D11;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'TestGrip 2.0'}
+{$DESIGNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  designide,
+  rtl,
+  vcldb,
+  dbrtl,
+  TestGripCore_D11;
+
+contains
+  FPropertyEditor in '..\..\IDE\FPropertyEditor.pas' {frmPropertyEditor},
+  uInputParser in '..\..\Definition\uInputParser.pas',
+  uTestDefs in '..\..\Definition\uTestDefs.pas',
+  uSplashRegister in '..\..\IDE\uSplashRegister.pas',
+  uIdeEditorManager in '..\..\IDE\uIdeEditorManager.pas',
+  FInputTest in '..\..\IDE\FInputTest.pas' {frmInputTest},
+  uProjectGen in '..\..\Generation\uProjectGen.pas',
+  uTestGen in '..\..\Generation\uTestGen.pas',
+  uPascalFileGen in '..\..\Generation\uPascalFileGen.pas',
+  uInheritGen in '..\..\Generation\uInheritGen.pas',
+  uConst in '..\..\Definition\uConst.pas',
+  uDelphiRegistry in '..\..\Generation\uDelphiRegistry.pas',
+  FMultitestEdit in '..\..\IDE\FMultitestEdit.pas' {frmTestsMatrixEdit},
+  FDetailsEdit in '..\..\IDE\FDetailsEdit.pas' {frmDetailsEdit},
+  FShowTestCode in '..\..\IDE\FShowTestCode.pas' {frmShowTestcode},
+  GDCVirtualTrees in '..\..\thirdparty\virtual treeview\Source\GDCVirtualTrees.pas',
+  GDCVTAccessibility in '..\..\thirdparty\virtual treeview\Source\GDCVTAccessibility.pas',
+  GDCVTAccessibilityFactory in '..\..\thirdparty\virtual treeview\Source\GDCVTAccessibilityFactory.pas',
+  GDCVTHeaderPopup in '..\..\thirdparty\virtual treeview\Source\GDCVTHeaderPopup.pas',
+  GDCMSAAIntf in '..\..\thirdparty\virtual treeview\Common\GDCMSAAIntf.pas',
+  GDCSynAutoCorrect in '..\..\thirdparty\SynEdit\Source\GDCSynAutoCorrect.pas',
+  GDCSynAutoCorrectEditor in '..\..\thirdparty\SynEdit\Source\GDCSynAutoCorrectEditor.pas' {frmAutoCorrectEditor},
+  GDCSynCompletionProposal in '..\..\thirdparty\SynEdit\Source\GDCSynCompletionProposal.pas',
+  GDCSynDBEdit in '..\..\thirdparty\SynEdit\Source\GDCSynDBEdit.pas',
+  GDCSynEdit in '..\..\thirdparty\SynEdit\Source\GDCSynEdit.pas',
+  GDCSynEditAutoComplete in '..\..\thirdparty\SynEdit\Source\GDCSynEditAutoComplete.pas',
+  GDCSynEditExport in '..\..\thirdparty\SynEdit\Source\GDCSynEditExport.pas',
+  GDCSynEditHighlighter in '..\..\thirdparty\SynEdit\Source\GDCSynEditHighlighter.pas',
+  GDCSynEditKbdHandler in '..\..\thirdparty\SynEdit\Source\GDCSynEditKbdHandler.pas',
+  GDCSynEditKeyCmdEditor in '..\..\thirdparty\SynEdit\Source\GDCSynEditKeyCmdEditor.pas' {GDCSynEditKeystrokeEditorForm},
+  GDCSynEditKeyCmds in '..\..\thirdparty\SynEdit\Source\GDCSynEditKeyCmds.pas',
+  GDCSynEditKeyCmdsEditor in '..\..\thirdparty\SynEdit\Source\GDCSynEditKeyCmdsEditor.pas' {GDCSynEditKeystrokesEditorForm},
+  GDCSynEditKeyConst in '..\..\thirdparty\SynEdit\Source\GDCSynEditKeyConst.pas',
+  GDCSynEditMiscClasses in '..\..\thirdparty\SynEdit\Source\GDCSynEditMiscClasses.pas',
+  GDCSynEditMiscProcs in '..\..\thirdparty\SynEdit\Source\GDCSynEditMiscProcs.pas',
+  GDCSynEditOptionsDialog in '..\..\thirdparty\SynEdit\Source\GDCSynEditOptionsDialog.pas' {fmEditorOptionsDialog},
+  GDCSynEditPlugins in '..\..\thirdparty\SynEdit\Source\GDCSynEditPlugins.pas',
+  GDCSynEditPrint in '..\..\thirdparty\SynEdit\Source\GDCSynEditPrint.pas',
+  GDCSynEditPrinterInfo in '..\..\thirdparty\SynEdit\Source\GDCSynEditPrinterInfo.pas',
+  GDCSynEditPrintHeaderFooter in '..\..\thirdparty\SynEdit\Source\GDCSynEditPrintHeaderFooter.pas',
+  GDCSynEditPrintMargins in '..\..\thirdparty\SynEdit\Source\GDCSynEditPrintMargins.pas',
+  GDCSynEditPrintMarginsDialog in '..\..\thirdparty\SynEdit\Source\GDCSynEditPrintMarginsDialog.pas' {GDCSynEditPrintMarginsDlg},
+  GDCSynEditPrintPreview in '..\..\thirdparty\SynEdit\Source\GDCSynEditPrintPreview.pas',
+  GDCSynEditPrintTypes in '..\..\thirdparty\SynEdit\Source\GDCSynEditPrintTypes.pas',
+  GDCSynEditPythonBehaviour in '..\..\thirdparty\SynEdit\Source\GDCSynEditPythonBehaviour.pas',
+  GDCSynEditRegexSearch in '..\..\thirdparty\SynEdit\Source\GDCSynEditRegexSearch.pas',
+  GDCSynEditSearch in '..\..\thirdparty\SynEdit\Source\GDCSynEditSearch.pas',
+  GDCSynEditStrConst in '..\..\thirdparty\SynEdit\Source\GDCSynEditStrConst.pas',
+  GDCSynEditTextBuffer in '..\..\thirdparty\SynEdit\Source\GDCSynEditTextBuffer.pas',
+  GDCSynEditTypes in '..\..\thirdparty\SynEdit\Source\GDCSynEditTypes.pas',
+  GDCSynEditWildcardSearch in '..\..\thirdparty\SynEdit\Source\GDCSynEditWildcardSearch.pas',
+  GDCSynEditWordWrap in '..\..\thirdparty\SynEdit\Source\GDCSynEditWordWrap.pas',
+  GDCSynExportHTML in '..\..\thirdparty\SynEdit\Source\GDCSynExportHTML.pas',
+  GDCSynExportRTF in '..\..\thirdparty\SynEdit\Source\GDCSynExportRTF.pas',
+  GDCSynExportTeX in '..\..\thirdparty\SynEdit\Source\GDCSynExportTeX.pas',
+  GDCSynHighlighterGeneral in '..\..\thirdparty\SynEdit\Source\GDCSynHighlighterGeneral.pas',
+  GDCSynHighlighterManager in '..\..\thirdparty\SynEdit\Source\GDCSynHighlighterManager.pas',
+  GDCSynHighlighterMsg in '..\..\thirdparty\SynEdit\Source\GDCSynHighlighterMsg.pas',
+  GDCSynHighlighterMulti in '..\..\thirdparty\SynEdit\Source\GDCSynHighlighterMulti.pas',
+  GDCSynHighlighterPas in '..\..\thirdparty\SynEdit\Source\GDCSynHighlighterPas.pas',
+  GDCSynHighlighterURI in '..\..\thirdparty\SynEdit\Source\GDCSynHighlighterURI.pas',
+  GDCSynHighlighterXML in '..\..\thirdparty\SynEdit\Source\GDCSynHighlighterXML.pas',
+  GDCSynMacroRecorder in '..\..\thirdparty\SynEdit\Source\GDCSynMacroRecorder.pas',
+  GDCSynMemo in '..\..\thirdparty\SynEdit\Source\GDCSynMemo.pas',
+  GDCSynRegExpr in '..\..\thirdparty\SynEdit\Source\GDCSynRegExpr.pas',
+  GDCSynTextDrawer in '..\..\thirdparty\SynEdit\Source\GDCSynTextDrawer.pas',
+  GDCSynUnicode in '..\..\thirdparty\SynEdit\Source\GDCSynUnicode.pas',
+  GDCSynURIOpener in '..\..\thirdparty\SynEdit\Source\GDCSynURIOpener.pas',
+  FShowTestResults in '..\..\IDE\FShowTestResults.pas' {frmShowTestresults},
+  FAboutTestgrip in '..\..\IDE\FAboutTestgrip.pas' {FrmAboutTestgrip},
+  uProjectTesting in '..\..\Generation\uProjectTesting.pas',
+  FRename in '..\..\IDE\FRename.pas' {frmRename},
+  uTestgripUIFuncs in '..\..\IDE\uTestgripUIFuncs.pas',
+  uHelp in '..\..\IDE\uHelp.pas',
+  uTestgripInstall in '..\..\Generation\uTestgripInstall.pas',
+  uBuildOutputParser in '..\..\Execution\uBuildOutputParser.pas',
+  uDUnitTestGen in '..\..\Generation\uDUnitTestGen.pas',
+  uDUnitXTestGen in '..\..\Generation\uDUnitXTestGen.pas',
+  uUnitTestGenBase in '..\..\Generation\uUnitTestGenBase.pas',
+  uUnitTestGenIntf in '..\..\Generation\uUnitTestGenIntf.pas',
+  uIDEGarbageCollector in '..\..\IDE\uIDEGarbageCollector.pas';
+
+end.
+
+
