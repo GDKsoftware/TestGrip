@@ -1,0 +1,180 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{2060A7C0-D5B0-49F0-8137-3377C2224778}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Apps\TestGripCore\TestgripCore_D11.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\IDEGrip\IDEGrip_D11.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\TestGripPlugin\IntegratedUnitTest_D11.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\WindmillPlugin\WindmillPlugin_D11.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\TestGripTester\TestgripProjectTester_DXE12.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\TestIDE\TestIDE.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\UnitBrowser\UnitBrowser.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\UnitSearch\UnitSearch.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\ImpGen\impgen.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\XDataAPIDocGen\XDataAPIDocGen.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\WindmillPP\WindmillPP.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\WindmillPP\WindmillUnitTests.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Apps\install\Demoproject\TheWorld.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="TestgripCore_D11">
+        <MSBuild Projects="Apps\TestGripCore\TestgripCore_D11.dproj"/>
+    </Target>
+    <Target Name="TestgripCore_D11:Clean">
+        <MSBuild Projects="Apps\TestGripCore\TestgripCore_D11.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TestgripCore_D11:Make">
+        <MSBuild Projects="Apps\TestGripCore\TestgripCore_D11.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="IDEGrip_D11">
+        <MSBuild Projects="Apps\IDEGrip\IDEGrip_D11.dproj"/>
+    </Target>
+    <Target Name="IDEGrip_D11:Clean">
+        <MSBuild Projects="Apps\IDEGrip\IDEGrip_D11.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IDEGrip_D11:Make">
+        <MSBuild Projects="Apps\IDEGrip\IDEGrip_D11.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="IntegratedUnitTest_D11">
+        <MSBuild Projects="Apps\TestGripPlugin\IntegratedUnitTest_D11.dproj"/>
+    </Target>
+    <Target Name="IntegratedUnitTest_D11:Clean">
+        <MSBuild Projects="Apps\TestGripPlugin\IntegratedUnitTest_D11.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IntegratedUnitTest_D11:Make">
+        <MSBuild Projects="Apps\TestGripPlugin\IntegratedUnitTest_D11.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="WindmillPlugin_D11">
+        <MSBuild Projects="Apps\WindmillPlugin\WindmillPlugin_D11.dproj"/>
+    </Target>
+    <Target Name="WindmillPlugin_D11:Clean">
+        <MSBuild Projects="Apps\WindmillPlugin\WindmillPlugin_D11.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="WindmillPlugin_D11:Make">
+        <MSBuild Projects="Apps\WindmillPlugin\WindmillPlugin_D11.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TestgripProjectTester_DXE12">
+        <MSBuild Projects="Apps\TestGripTester\TestgripProjectTester_DXE12.dproj"/>
+    </Target>
+    <Target Name="TestgripProjectTester_DXE12:Clean">
+        <MSBuild Projects="Apps\TestGripTester\TestgripProjectTester_DXE12.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TestgripProjectTester_DXE12:Make">
+        <MSBuild Projects="Apps\TestGripTester\TestgripProjectTester_DXE12.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TestIDE">
+        <MSBuild Projects="Apps\TestIDE\TestIDE.dproj"/>
+    </Target>
+    <Target Name="TestIDE:Clean">
+        <MSBuild Projects="Apps\TestIDE\TestIDE.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TestIDE:Make">
+        <MSBuild Projects="Apps\TestIDE\TestIDE.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="UnitBrowser">
+        <MSBuild Projects="Apps\UnitBrowser\UnitBrowser.dproj"/>
+    </Target>
+    <Target Name="UnitBrowser:Clean">
+        <MSBuild Projects="Apps\UnitBrowser\UnitBrowser.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="UnitBrowser:Make">
+        <MSBuild Projects="Apps\UnitBrowser\UnitBrowser.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="UnitSearch">
+        <MSBuild Projects="Apps\UnitSearch\UnitSearch.dproj"/>
+    </Target>
+    <Target Name="UnitSearch:Clean">
+        <MSBuild Projects="Apps\UnitSearch\UnitSearch.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="UnitSearch:Make">
+        <MSBuild Projects="Apps\UnitSearch\UnitSearch.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="impgen">
+        <MSBuild Projects="Apps\ImpGen\impgen.dproj"/>
+    </Target>
+    <Target Name="impgen:Clean">
+        <MSBuild Projects="Apps\ImpGen\impgen.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="impgen:Make">
+        <MSBuild Projects="Apps\ImpGen\impgen.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="XDataAPIDocGen">
+        <MSBuild Projects="Apps\XDataAPIDocGen\XDataAPIDocGen.dproj"/>
+    </Target>
+    <Target Name="XDataAPIDocGen:Clean">
+        <MSBuild Projects="Apps\XDataAPIDocGen\XDataAPIDocGen.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="XDataAPIDocGen:Make">
+        <MSBuild Projects="Apps\XDataAPIDocGen\XDataAPIDocGen.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="WindmillPP">
+        <MSBuild Projects="Apps\WindmillPP\WindmillPP.dproj"/>
+    </Target>
+    <Target Name="WindmillPP:Clean">
+        <MSBuild Projects="Apps\WindmillPP\WindmillPP.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="WindmillPP:Make">
+        <MSBuild Projects="Apps\WindmillPP\WindmillPP.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="WindmillUnitTests">
+        <MSBuild Projects="Apps\WindmillPP\WindmillUnitTests.dproj"/>
+    </Target>
+    <Target Name="WindmillUnitTests:Clean">
+        <MSBuild Projects="Apps\WindmillPP\WindmillUnitTests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="WindmillUnitTests:Make">
+        <MSBuild Projects="Apps\WindmillPP\WindmillUnitTests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TheWorld">
+        <MSBuild Projects="Apps\install\Demoproject\TheWorld.dproj"/>
+    </Target>
+    <Target Name="TheWorld:Clean">
+        <MSBuild Projects="Apps\install\Demoproject\TheWorld.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TheWorld:Make">
+        <MSBuild Projects="Apps\install\Demoproject\TheWorld.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="TestgripCore_D11;IDEGrip_D11;IntegratedUnitTest_D11;WindmillPlugin_D11;TestgripProjectTester_DXE12;TestIDE;UnitBrowser;UnitSearch;impgen;XDataAPIDocGen;WindmillPP;WindmillUnitTests;TheWorld"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="TestgripCore_D11:Clean;IDEGrip_D11:Clean;IntegratedUnitTest_D11:Clean;WindmillPlugin_D11:Clean;TestgripProjectTester_DXE12:Clean;TestIDE:Clean;UnitBrowser:Clean;UnitSearch:Clean;impgen:Clean;XDataAPIDocGen:Clean;WindmillPP:Clean;WindmillUnitTests:Clean;TheWorld:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="TestgripCore_D11:Make;IDEGrip_D11:Make;IntegratedUnitTest_D11:Make;WindmillPlugin_D11:Make;TestgripProjectTester_DXE12:Make;TestIDE:Make;UnitBrowser:Make;UnitSearch:Make;impgen:Make;XDataAPIDocGen:Make;WindmillPP:Make;WindmillUnitTests:Make;TheWorld:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

@@ -2,6 +2,8 @@ unit uUnitParser;
 
 interface
 
+{$I ..\Testgrip.inc}
+
 uses
   Classes, Contnrs, uPascalDefs;
 
@@ -43,7 +45,11 @@ type
     function GetHasOuterUses: Boolean;
     function GetHasInnerUses: Boolean;
 
-    function ReadLoopUntilSemiColon(const sIn: ansistring; iStart: integer; var sOut: string): boolean;
+{$IFDEF DELPHI2009_UP}
+    function ReadLoopUntilSemiColon(const sIn: string; iStart: integer; var sOut: string): boolean;
+{$ELSE}
+    function ReadLoopUntilSemiColon(const sIn: ansistring; iStart: integer; var sOut: ansistring): boolean;
+{$ENDIF}
 
     procedure ParseUsesList( const lstIn: TStrings; const lstOut: TStrings; bIsDkp: boolean = False );
 
@@ -182,7 +188,11 @@ begin
     begin
       state := 1;
     end
+    {$IFDEF DELPHI2009_UP}
+    else if CharInSet(s[i], [#13,#10,#7,' ']) then
+    {$ELSE}
     else if (s[i] in [#13,#10,#7,' ']) then
+    {$ENDIF}
     begin
       // continue unless state=2
       if state = 2 then
@@ -370,13 +380,20 @@ procedure TUnitParser.ExtractAllMethods(const s: TStream; bGetLineNumbers: boole
 var
   bEof: boolean;
   iRead: integer;
-  block: ansistring;
+{$IFDEF DELPHI2009_UP}
+  block: string;
+  largeblock: string;
+  largeblocklowercase: string;
+  sMethodDef: string;
+{$ELSE}
   largeblock: ansistring;
+  block: ansistring;
   largeblocklowercase: ansistring;
+  sMethodDef: ansistring;
+{$ENDIF}
   i: integer;
   pc, pd, pp, pf: integer;
   bInParams: boolean;
-  sMethodDef: ansistring;
   bInMethodDef: boolean;
   fdef: TMethodDefinition;
   iAnotherLineOffset: integer;
@@ -424,25 +441,41 @@ begin
       pf := PosEx('function ', largeblocklowercase, Max(1, i - 8));
       largeblocklowercase := '';
 
+      {$IFDEF DELPHI2009_UP}
+      if (pc > 2) and not CharInSet(largeblock[pc - 1], [#$0A,#$0D,#$07,#$20]) then
+      {$ELSE}
       if (pc > 2) and not (largeblock[pc - 1] in [#$0A,#$0D,#$07,#$20]) then
+      {$ENDIF}
       begin
         iSkip := Min(pc + 12, iSkip);
         pc := 0;
       end;
 
+      {$IFDEF DELPHI2009_UP}
+      if (pd > 2) and not CharInSet(largeblock[pd - 1], [#$0A,#$0D,#$07,#$20]) then
+      {$ELSE}
       if (pd > 2) and not (largeblock[pd - 1] in [#$0A,#$0D,#$07,#$20]) then
+      {$ENDIF}
       begin
         iSkip := Min(pd + 11, iSkip);
         pd := 0;
       end;
 
+      {$IFDEF DELPHI2009_UP}
+      if (pp > 2) and not CharInSet(largeblock[pp - 1], [#$0A,#$0D,#$07,#$20]) then
+      {$ELSE}
       if (pp > 2) and not (largeblock[pp - 1] in [#$0A,#$0D,#$07,#$20]) then
+      {$ENDIF}
       begin
         iSkip := Min(pp + 10, iSkip);
         pp := 0;
       end;
 
+      {$IFDEF DELPHI2009_UP}
+      if (pf > 2) and not CharInSet(largeblock[pf - 1], [#$0A,#$0D,#$07,#$20]) then
+      {$ELSE}
       if (pf > 2) and not (largeblock[pf - 1] in [#$0A,#$0D,#$07,#$20]) then
+      {$ENDIF}
       begin
         iSkip := Min(pf + 9, iSkip);
         pf := 0;
@@ -706,19 +739,29 @@ var
   bInUses2: boolean;
   bInClassTypeDeclaration: boolean;
   bInAnnotation: boolean;
-  sCurrentKeyWord: ansistring;
-  sPreviousKeyWord: ansistring;
   sHelperWord: ansistring;
-  sTypeName: ansistring;
-  sCurrentClass: ansistring;
-  sTempLine: ansistring;
   bEof: boolean;
+{$IFDEF DELPHI2009_UP}
+  sCurrentClass: string;
+  sTypeName: string;
+  sPreviousKeyWord: string;
+  sCurrentKeyWord: string;
+  block: string;
+  sTempLine: string;
+  ch: Char;
+{$ELSE}
+  sCurrentClass: ansistring;
+  sTypeName: ansistring;
+  sPreviousKeyWord: ansistring;
+  sCurrentKeyWord: ansistring;
   block: ansistring;
+  sTempLine: ansistring;
+  ch: AnsiChar;
+{$ENDIF}
   iRead: integer;
   iTotalBytesDone: integer;
   i: Integer;
   x: integer;
-  ch: AnsiChar;
   sUsesList1: string;
   sUsesList2: string;
   bWasInElse: boolean;
@@ -861,7 +904,11 @@ begin
 
       if bInLineComment then
       begin
+        {$IFDEF DELPHI2009_UP}
+        if CharInSet(ch, [#$0D, #$0A]) then
+        {$ELSE}
         if (ch in [#$0D, #$0A]) then
+        {$ENDIF}
         begin
           bInLineComment := false;
         end;
@@ -1077,7 +1124,11 @@ begin
 
         sTempLine := FilterVariable(sTempLine);
       end
+      {$IFDEF DELPHI2009_UP}
+      else if CharInSet(ch, [#$20, #$09, #$0A, #$0D, '(']) and (iInGenericTypes = 0) then
+      {$ELSE}
       else if (ch in [#$20, #$09, #$0A, #$0D, '(']) and (iInGenericTypes = 0) then
+      {$ENDIF}
       begin
         if StartsText('class', sCurrentKeyWord) then
         begin
@@ -1516,7 +1567,11 @@ begin
 
 end;
 
-function TUnitParser.ReadLoopUntilSemiColon(const sIn: ansistring; iStart: integer; var sOut: string): boolean;
+{$IFDEF DELPHI2009_UP}
+function TUnitParser.ReadLoopUntilSemiColon(const sIn: string; iStart: integer; var sOut: string): boolean;
+{$ELSE}
+function TUnitParser.ReadLoopUntilSemiColon(const sIn: ansistring; iStart: integer; var sOut: ansistring): boolean;
+{$ENDIF}
 var
   i: integer;
   StartIdx: Integer;

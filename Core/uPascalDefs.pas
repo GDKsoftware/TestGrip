@@ -2,6 +2,8 @@ unit uPascalDefs;
 
 interface
 
+{$I ..\Testgrip.inc}
+
 uses
   Classes;
 
@@ -493,7 +495,6 @@ begin
       end
       else if ch = ';' then
       begin
-        bInClassName := False;
         FDefMethodName := FInClass;
         FInClass := '';
 
@@ -518,8 +519,6 @@ begin
       end
       else if ch = ';' then
       begin
-        bInMethodName := False;
-
         break;
       end
       else
@@ -543,7 +542,6 @@ begin
       if ch = ';' then
       begin
         FFunctype := Trim(FFunctype);
-        bInResult := False;
 
         break;
       end
@@ -808,7 +806,11 @@ begin
           bConstraint := False;
           Result := Result + ',';
         end
+        {$IFDEF DELPHI2009_UP}
+        else if not bConstraint and not CharInSet(s[i], [#$20,#$9]) then
+        {$ELSE}
         else if not bConstraint and not (s[i] in [#$20,#$9]) then
+        {$ENDIF}
         begin
           Result := Result + s[i];
         end;
@@ -945,8 +947,6 @@ begin
         SetType(sTemp);
 
         sTemp := '';
-        bInhPart := False;
-        bTypePart := False;
         Exit;
       end
       else
@@ -961,13 +961,11 @@ begin
         ParseInheritDef(sTemp);
 
         sTemp := '';
-        bTypePart := False;
         Exit;
       end
       else if FRawDefinition[i] = ';' then
       begin
         sTemp := '';
-        bTypePart := False;
         Exit;
       end
       else

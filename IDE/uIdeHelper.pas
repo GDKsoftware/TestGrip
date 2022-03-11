@@ -2,6 +2,8 @@ unit uIdeHelper;
 
 interface
 
+{$I ..\Testgrip.inc}
+
 uses
   uPascalDefs;
 
@@ -185,7 +187,12 @@ var
   iFrom, iNewPos: integer;
   cr: IOTAEditReader;
   iRead: integer;
+{$IFDEF DELPHI2009_UP}
+  sText: string;
+  sAnsiText: ansistring;
+{$ELSE}
   sText: ansistring;
+{$ENDIF}
 begin
   result := '';
 
@@ -214,7 +221,12 @@ begin
   begin
     iNewPos := 100;
   end;
+{$IFDEF DELPHI2009_UP}
+  sAnsiText := AnsiString(sText);
+  iRead := cr.GetText(iFrom, PAnsiChar(sAnsiText), 200);
+{$ELSE}
   iRead := cr.GetText(iFrom, PAnsiChar(sText), 200);
+{$ENDIF}
   SetLength(sText, iRead);
 
   iNewPos := TCommonStringSearch.FindCharacterBackwards(sText, iNewPos, c_CodeChars) + 1;

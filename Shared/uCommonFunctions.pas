@@ -2,6 +2,8 @@ unit uCommonFunctions;
 
 interface
 
+{$I ..\Testgrip.inc}
+
 uses
   Classes, StrUtils;
 
@@ -59,11 +61,17 @@ type
 
   TCommonStringSearch = class
   public
+{$IFDEF DELPHI2009_UP}
     class function FindCharacterForward( const sBuffer: string; iStartPos: integer; aCharlist: TCharSet; bReadUntilLast: boolean = false ): integer;
-    class function FindCharacterBackwards( const sBuffer: ansistring; iStartPos: integer; aCharlist: TCharSet; bReadUntilLast: boolean = false ): integer;
-
+    class function FindCharacterBackwards( const sBuffer: string; iStartPos: integer; aCharlist: TCharSet; bReadUntilLast: boolean = false ): integer;
     class function FindPreviousWord(const sBuffer: string; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
-    class function FindNextWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
+    class function FindNextWord(const sBuffer: string; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
+{$ELSE}
+    class function FindCharacterForward( const sBuffer: ansistring; iStartPos: integer; aCharlist: TCharSet; bReadUntilLast: boolean = false ): integer;
+    class function FindCharacterBackwards( const sBuffer: ansistring; iStartPos: integer; aCharlist: TCharSet; bReadUntilLast: boolean = false ): integer;
+    class function FindPreviousWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: ansistring): integer;
+    class function FindNextWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: ansistring): integer;
+{$ENDIF}
   end;
 
   TKeyValueFunctions = class
@@ -74,29 +82,27 @@ type
 
   TBase64 = class
   public
+{$IFDEF DELPHI2009_UP}
+    class function CharsToBase64( const sInput: string ): string;
+    class function Encode(const s: string; bRemovePadding: boolean = false): string;
+    class function Decode(const s: string): string;
+{$ELSE}
     class function CharsToBase64( const sInput: ansistring ): ansistring;
-
     class function Encode(const s: ansistring; bRemovePadding: boolean = false): ansistring;
     class function Decode(const s: ansistring): ansistring;
+{$ENDIF}
   end;
 
-
-
-
-  {$ifdef VER150}
-    {$define NEEDCHARINCSET}
-  {$endif}
-  {$ifdef VER180}
-    {$define NEEDCHARINCSET}
-  {$endif}
-
-  {$ifdef NEEDCHARINCSET}
+{$IFDEF NEEDCHARINCSET}
   function CharInSet(const AChar: Char; const ACharSet: TCharSet): Boolean;
-  {$endif}
+{$endif}
 
 implementation
 
 uses
+{$IFDEF DELPHI103_UP}
+  System.Character,
+{$ENDIF}
   SysUtils, Windows, Forms, ShellApi, SHFolder, uD7Functions;
 
 const
@@ -128,7 +134,11 @@ var
   i, j, c, d: integer;
   iSkip: integer;
   cFirstChar: char;
+{$IFDEF DELPHI2009_UP}
+  block: string;
+{$ELSE}
   block: ansistring;
+{$ENDIF}
   bPayAttention: boolean;
 begin
   Result := 0;
@@ -247,13 +257,18 @@ begin
 end;
 
 class function TCommonStringFunctions.IsNumeric(const s: string): boolean;
+{$IFNDEF DELPHI103_UP}
 var
   i: integer;
   r: Extended;
+{$ENDIF}
 begin
+{$IFDEF DELPHI103_UP}
+  Result := IsNumeric(s);
+{$ELSE}
   Val( s, r, i );
-
   Result := (i = 0);
+{$ENDIF}
 end;
 
 class function TCommonStringFunctions.OnlyNormalChars(const Key: Char): Char;
@@ -305,7 +320,11 @@ end;
 
 { TBase64 }
 
+{$IFDEF DELPHI2009_UP}
+class function TBase64.CharsToBase64(const sInput: string): string;
+{$ELSE}
 class function TBase64.CharsToBase64(const sInput: ansistring): ansistring;
+{$ENDIF}
 var
   a, b, c, d: byte;
 begin
@@ -326,7 +345,11 @@ begin
 end;
 
 //  http://www.swissdelphicenter.ch/torry/showcode.php?id=1524
+{$IFDEF DELPHI2009_UP}
+class function TBase64.Decode(const s: string): string;
+{$ELSE}
 class function TBase64.Decode(const s: ansistring): ansistring;
+{$ENDIF}
 var
   i: Integer;
   a: Integer;
@@ -355,10 +378,18 @@ begin
   end;
 end;
 
+{$IFDEF DELPHI2009_UP}
+class function TBase64.Encode(const s: string; bRemovePadding: boolean): string;
+{$ELSE}
 class function TBase64.Encode(const s: ansistring; bRemovePadding: boolean): ansistring;
+{$ENDIF}
 var
   i, j, inl, c: integer;
+{$IFDEF DELPHI2009_UP}
+  ic: string;
+{$ELSE}
   ic: ansistring;
+{$ENDIF}
 begin
   Result := '';
 
@@ -421,7 +452,11 @@ end;
 
 { TCommonStringSearch }
 
+{$IFDEF DELPHI2009_UP}
 class function TCommonStringSearch.FindCharacterForward( const sBuffer: string; iStartPos: integer; aCharlist: TCharSet; bReadUntilLast: boolean ): integer;
+{$ELSE}
+class function TCommonStringSearch.FindCharacterForward( const sBuffer: ansistring; iStartPos: integer; aCharlist: TCharSet; bReadUntilLast: boolean ): integer;
+{$ENDIF}
 var
   i, c: integer;
 begin
@@ -452,7 +487,11 @@ begin
   end;
 end;
 
+{$IFDEF DELPHI2009_UP}
+class function TCommonStringSearch.FindCharacterBackwards( const sBuffer: string; iStartPos: integer; aCharlist: TCharSet; bReadUntilLast: boolean ): integer;
+{$ELSE}
 class function TCommonStringSearch.FindCharacterBackwards( const sBuffer: ansistring; iStartPos: integer; aCharlist: TCharSet; bReadUntilLast: boolean ): integer;
+{$ENDIF}
 var
   i: integer;
 begin
@@ -482,7 +521,11 @@ begin
   end;
 end;
 
+{$IFDEF DELPHI2009_UP}
 class function TCommonStringSearch.FindPreviousWord(const sBuffer: string; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
+{$ELSE}
+class function TCommonStringSearch.FindPreviousWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: ansistring): integer;
+{$ENDIF}
 begin
   Result := FindCharacterBackwards(sBuffer, iStartPos, [' ',#9,#13,#10] + aExtraCharlist, False);
   sWord := Copy(sBuffer, Result + 1, iStartPos - Result);
@@ -495,7 +538,11 @@ begin
   sWord := Copy(sBuffer, Result + 1, iStartPos - Result - 1);
 end;
 
-class function TCommonStringSearch.FindNextWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
+{$IFDEF DELPHI2009_UP}
+class function TCommonStringSearch.FindNextWord(const sBuffer: string; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
+{$ELSE}
+class function TCommonStringSearch.FindNextWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: ansistring): integer;
+{$ENDIF}
 var
   iStart2: integer;
 begin
@@ -674,8 +721,11 @@ var
   hChildStd_ERR_Wr: THandle;
   dwRead: DWORD;
   bSuccess: boolean;
+{$IFDEF DELPHI2009_UP}
+  chBuf: PChar;
+{$ELSE}
   chBuf: PAnsiChar;
-  bTmp: boolean;
+{$ENDIF}
   sEditableCommandLineString: string;
   pEditableCommandLineString: PChar;
 begin
@@ -690,7 +740,7 @@ begin
   saAttr.bInheritHandle := TRUE;
   saAttr.lpSecurityDescriptor := nil;
 
-  bTmp := CreatePipe( hChildStd_OUT_Rd, hChildStd_OUT_Wr, @saAttr, SizeOf(TSecurityAttributes));
+  CreatePipe( hChildStd_OUT_Rd, hChildStd_OUT_Wr, @saAttr, SizeOf(TSecurityAttributes));
 
   DuplicateHandle(GetCurrentProcess,hChildStd_OUT_Wr,
                            GetCurrentProcess,@hChildStd_ERR_Wr,0,

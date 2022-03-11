@@ -2,6 +2,8 @@ unit uDUnitXTestGen;
 
 interface
 
+{$I ..\Testgrip.inc}
+
 uses
   Classes, uTestDefs,
   uPascalFileGen,
@@ -34,6 +36,9 @@ type
 implementation
 
 uses
+{$IFDEF DELPHI103_UP}
+  System.Contnrs,
+{$ENDIF}
   StrUtils, SysUtils, Variants, uD7Functions;
 
 { TDUnitXTestClassFileGen }
