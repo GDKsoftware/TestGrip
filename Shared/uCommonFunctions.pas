@@ -18,7 +18,6 @@ type
     class function GetUniqueID: string;
     class function GetAppDataFolder: string;
     class function GetSpecialWindowsFolder(aCSIDL: integer): string;
-
     class function HasAppParam(const s: string): boolean;
     class function GetAppParamStartingWith(const s: string): integer;
   end;
@@ -27,16 +26,15 @@ type
   public
     class function RPos(const SubStr: string; const S: string): integer;
     class function ContainsNonVisibleOrCRLFCharacters(const s: ansistring):boolean;
-
     class function CountLines(const s: TStream; iTypeOfLF: TLFType; iMaxLen: integer): integer; overload;
+    {$IFDEF DELPHI2009_UP}
     class function CountLines(const s: string; iTypeOfLF: TLFType = lfDos; iMaxLen: integer = -1): integer; overload;
-
+    {$ELSE}
+    class function CountLines(const s: AnsiString; iTypeOfLF: TLFType = lfDos; iMaxLen: integer = -1): integer; overload;
+    {$ENDIF}
     class function RemoveDoubleQuotes(const s: string): string;
-
     class function IsNumeric( const s: string ): boolean;
-
     class function OnlyNormalChars(const Key: Char): Char;
-
     class function SafeString(const aString: string): string;
   end;
 
@@ -54,24 +52,23 @@ type
   TCommonExecutionFunctions = class
   public
     class function ExecuteAndWaitAndGetStdOut(const strCommandLine : String; intVisibility: Integer; var sOut: string) : Cardinal;
-
     class procedure ExecuteFile(const pFile: string; const pDirectory: string);
     class procedure OpenURL(const aURL: string);
   end;
 
   TCommonStringSearch = class
   public
-{$IFDEF DELPHI2009_UP}
+    {$IFDEF DELPHI2009_UP}
     class function FindCharacterForward( const sBuffer: string; iStartPos: integer; aCharlist: TCharSet; bReadUntilLast: boolean = false ): integer;
     class function FindCharacterBackwards( const sBuffer: string; iStartPos: integer; aCharlist: TCharSet; bReadUntilLast: boolean = false ): integer;
     class function FindPreviousWord(const sBuffer: string; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
     class function FindNextWord(const sBuffer: string; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
-{$ELSE}
+    {$ELSE}
     class function FindCharacterForward( const sBuffer: ansistring; iStartPos: integer; aCharlist: TCharSet; bReadUntilLast: boolean = false ): integer;
     class function FindCharacterBackwards( const sBuffer: ansistring; iStartPos: integer; aCharlist: TCharSet; bReadUntilLast: boolean = false ): integer;
-    class function FindPreviousWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: ansistring): integer;
-    class function FindNextWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: ansistring): integer;
-{$ENDIF}
+    class function FindPreviousWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
+    class function FindNextWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
+    {$ENDIF}
   end;
 
   TKeyValueFunctions = class
@@ -82,40 +79,39 @@ type
 
   TBase64 = class
   public
-{$IFDEF DELPHI2009_UP}
+    {$IFDEF DELPHI2009_UP}
     class function CharsToBase64( const sInput: string ): string;
     class function Encode(const s: string; bRemovePadding: boolean = false): string;
     class function Decode(const s: string): string;
-{$ELSE}
+    {$ELSE}
     class function CharsToBase64( const sInput: ansistring ): ansistring;
     class function Encode(const s: ansistring; bRemovePadding: boolean = false): ansistring;
     class function Decode(const s: ansistring): ansistring;
-{$ENDIF}
+    {$ENDIF}
   end;
 
-{$IFDEF NEEDCHARINCSET}
+
+  {$ifdef NEEDCHARINCSET}
   function CharInSet(const AChar: Char; const ACharSet: TCharSet): Boolean;
-{$endif}
+  {$endif}
 
 implementation
 
 uses
-{$IFDEF DELPHI103_UP}
+  {$IFDEF DELPHI103_UP}
   System.Character,
-{$ENDIF}
+  {$ENDIF}
   SysUtils, Windows, Forms, ShellApi, SHFolder, uD7Functions;
 
 const
   c_base64table = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 { TCommonStringFunctions }
-
 class function TCommonStringFunctions.ContainsNonVisibleOrCRLFCharacters(const s: ansistring): boolean;
 var
   i, c: integer;
 begin
   Result := False;
-
   c := Length(s);
   for i := 1 to c do
   begin
@@ -133,20 +129,19 @@ const
 var
   i, j, c, d: integer;
   iSkip: integer;
+  {$IFDEF DELPHI2009_UP}
   cFirstChar: char;
-{$IFDEF DELPHI2009_UP}
   block: string;
-{$ELSE}
+  {$ELSE}
+  cFirstChar: ansichar;
   block: ansistring;
-{$ENDIF}
+  {$ENDIF}
   bPayAttention: boolean;
 begin
   Result := 0;
   bPayAttention := False;
-
   iSkip := 1;
   cFirstChar := #0;
-
   case iTypeOfLF of
     lfDos:
     begin
@@ -164,24 +159,19 @@ begin
       cFirstChar := #13;
     end;
   end;
-
   c := iMaxLen;
   d := 0;
-
   SetLength(block, c_buffersize);
-
   j := s.Read(block, c_buffersize);
   while j > 0 do
   begin
     SetLength(block, j);
-
     Inc(d, j);
     if d > c then
     begin
       Dec(d, j);
       bPayAttention := True;
     end;
-
     i := PosEx(cFirstChar, block, 1);
     while (i <> 0) and (i <= c) do
     begin
@@ -190,34 +180,31 @@ begin
         d := c;
         break;
       end;
-
       Inc(Result);
-
       Inc(i, iSkip);
-
       i := PosEx(cFirstChar, block, i);
     end;
-
     if d >= c then
     begin
       break;
     end;
-
     j := s.Read(block, c_buffersize);
   end;
 end;
 
+{$IFDEF DELPHI2009_UP}
 class function TCommonStringFunctions.CountLines(const s: string; iTypeOfLF: TLFType; iMaxLen: integer): integer;
+{$ELSE}
+class function TCommonStringFunctions.CountLines(const s: ansistring; iTypeOfLF: TLFType; iMaxLen: integer): integer;
+{$ENDIF}
 var
   i, c: integer;
   iSkip: integer;
   cFirstChar: char;
 begin
   Result := 0;
-
   iSkip := 1;
   cFirstChar := #0;
-
   case iTypeOfLF of
     lfDos:
     begin
@@ -235,7 +222,6 @@ begin
       cFirstChar := #13;
     end;
   end;
-
   if iMaxLen = -1 then
   begin
     c := Length(s);
@@ -244,14 +230,11 @@ begin
   begin
     c := iMaxLen;
   end;
-
   i := PosEx(cFirstChar, s, 1);
   while (i <> 0) and (i <= c) do
   begin
     Inc(Result);
-
     Inc(i, iSkip);
-
     i := PosEx(cFirstChar, s, i);
   end;
 end;
@@ -289,7 +272,6 @@ begin
   begin
     Result := Copy(Result,2);
   end;
-
   if EndsStr('"', s) then
   begin
     SetLength(Result, Length(Result) - 1);
@@ -336,7 +318,6 @@ begin
   d := (byte(sInput[3]) and $C0) shr 6;
   Inc(c, d);
   d := (byte(sInput[3]) and $3F);
-
   Result :=
     c_base64table[1+a] +
     c_base64table[1+b] +
@@ -392,31 +373,24 @@ var
 {$ENDIF}
 begin
   Result := '';
-
   SetLength(ic,3);
   ic[1] := #0;
   ic[2] := #0;
   ic[3] := #0;
-
   i := 1;
   j := 0;
   inl := 0;
-
   c := Length(s);
   while i <= c do
   begin
     ic[j+1] := s[i];
-
     Inc(j);
     Inc(i);
-
     j := j mod 3;
-
     if j = 0 then
     begin
       Result := Result + CharsToBase64(ic);
       Inc(inl);
-
       if inl = 19 then
       begin
         inl := 0;
@@ -424,12 +398,10 @@ begin
       end;
     end;
   end;
-
   if j = 2 then
   begin
     ic[3] := #0;
     Result := Result + CharsToBase64(ic);
-
     SetLength( Result, Length(Result) - 1 );
     if not bRemovePadding then
     begin
@@ -440,7 +412,6 @@ begin
   begin
     ic[2] := #0;
     Result := Result + CharsToBase64(ic);
-
     SetLength( Result, Length(Result) - 2 );
     if not bRemovePadding then
     begin
@@ -448,7 +419,6 @@ begin
     end;
   end;
 end;
-
 
 { TCommonStringSearch }
 
@@ -461,7 +431,6 @@ var
   i, c: integer;
 begin
   Result := 0;
-
   i := iStartPos;
   c := Length(sBuffer);
   while (i < c) do
@@ -469,7 +438,6 @@ begin
     if CharInSet(sBuffer[i], aCharlist) then
     begin
       Result := i;
-
       if not bReadUntilLast then
       begin
         break;
@@ -482,7 +450,6 @@ begin
         break;
       end;
     end;
-
     Inc(i);
   end;
 end;
@@ -496,14 +463,12 @@ var
   i: integer;
 begin
   Result := 0;
-
   i := iStartPos;
   while (i > 0) do
   begin
     if CharInSet(sBuffer[i], aCharList) then
     begin
       Result := i;
-
       if not bReadUntilLast then
       begin
         break;
@@ -516,7 +481,6 @@ begin
         break;
       end;
     end;
-
     Dec(i);
   end;
 end;
@@ -524,24 +488,22 @@ end;
 {$IFDEF DELPHI2009_UP}
 class function TCommonStringSearch.FindPreviousWord(const sBuffer: string; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
 {$ELSE}
-class function TCommonStringSearch.FindPreviousWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: ansistring): integer;
+class function TCommonStringSearch.FindPreviousWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
 {$ENDIF}
 begin
   Result := FindCharacterBackwards(sBuffer, iStartPos, [' ',#9,#13,#10] + aExtraCharlist, False);
   sWord := Copy(sBuffer, Result + 1, iStartPos - Result);
-
   if Trim(sWord) = '' then
   begin
     Result := FindCharacterBackwards(sBuffer, Result - 1, [' ',#9,#13,#10] + aExtraCharlist, False);
   end;
-
   sWord := Copy(sBuffer, Result + 1, iStartPos - Result - 1);
 end;
 
 {$IFDEF DELPHI2009_UP}
 class function TCommonStringSearch.FindNextWord(const sBuffer: string; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
 {$ELSE}
-class function TCommonStringSearch.FindNextWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: ansistring): integer;
+class function TCommonStringSearch.FindNextWord(const sBuffer: ansistring; iStartPos: integer; aExtraCharlist: TCharSet; var sWord: string): integer;
 {$ENDIF}
 var
   iStart2: integer;
@@ -555,7 +517,6 @@ begin
   begin
     sWord := Copy(sBuffer, iStartPos);
   end;
-
   if Trim(sWord) = '' then
   begin
     iStart2 := Result + 1;
@@ -570,7 +531,6 @@ begin
     end;
   end;
 end;
-
 
 {$ifdef NEEDCHARINCSET}
 function CharInSet(const AChar: Char; const ACharSet: TCharSet): Boolean;
@@ -648,7 +608,6 @@ var
   i, c: integer;
 begin
   Result := -1;
-
   c := ParamCount;
   for i := 1 to c do
   begin
@@ -673,7 +632,6 @@ var
   lPath: array [0..255] of char;
 begin
   SHGetFolderPath(0, aCSIDL, 0, SHGFP_TYPE_CURRENT, @lPath[0]);
-
   Result := lPath;
 end;
 
@@ -690,7 +648,6 @@ var
   i, c: integer;
 begin
   Result := False;
-
   c := ParamCount;
   for i := 1 to c do
   begin
@@ -712,43 +669,36 @@ var
   StartupInfo : TStartupInfo;
   ProcessInformation : TProcessInformation;
   intWaitState : DWORD;
-
   saAttr: TSecurityAttributes;
-
   hChildStd_OUT_Rd: THandle;
   hChildStd_ERR_Rd: THandle;
   hChildStd_OUT_Wr: THandle;
   hChildStd_ERR_Wr: THandle;
   dwRead: DWORD;
   bSuccess: boolean;
-{$IFDEF DELPHI2009_UP}
+  {$IFDEF DELPHI2009_UP}
   chBuf: PChar;
-{$ELSE}
+  {$ELSE}
   chBuf: PAnsiChar;
-{$ENDIF}
+  {$ENDIF}
   sEditableCommandLineString: string;
   pEditableCommandLineString: PChar;
 begin
   Result := 0;
-
   // TODO -opquist: code is nog niet helemaal correct/netjes, maar werkt voor het moment
   //  zie: http://groups.google.com/group/borland.public.delphi.language.delphi.win32/browse_thread/thread/8646e723bb9c7023
   //  zie: http://support.microsoft.com/kb/190351
-
   FillChar(saAttr, SizeOf(TSecurityAttributes), 0);
   saAttr.nLength := SizeOf(TSecurityAttributes);
   saAttr.bInheritHandle := TRUE;
   saAttr.lpSecurityDescriptor := nil;
-
   CreatePipe( hChildStd_OUT_Rd, hChildStd_OUT_Wr, @saAttr, SizeOf(TSecurityAttributes));
-
   DuplicateHandle(GetCurrentProcess,hChildStd_OUT_Wr,
                            GetCurrentProcess,@hChildStd_ERR_Wr,0,
                            TRUE,DUPLICATE_SAME_ACCESS);
   DuplicateHandle(GetCurrentProcess,hChildStd_OUT_Rd,
                            GetCurrentProcess,@hChildStd_ERR_Rd,0,
                            TRUE,DUPLICATE_SAME_ACCESS);
-
 
   FillChar(StartupInfo, SizeOf(TStartupInfo), 0);
   StartupInfo.cb := SizeOf(TStartupInfo);
@@ -757,7 +707,6 @@ begin
   StartupInfo.hStdOutput := hChildStd_OUT_Wr;
   StartupInfo.hStdError := hChildStd_ERR_Wr;
   StartupInfo.dwFlags := STARTF_USESTDHANDLES or STARTF_USESHOWWINDOW;
-
   // http://msdn.microsoft.com/en-us/library/ms682425
   // "The Unicode version of this function, CreateProcessW, can modify the contents of this string.
   //  Therefore, this parameter cannot be a pointer to read-only memory (such as a const variable or a literal string).
@@ -771,7 +720,6 @@ begin
       while not Application.Terminated do
       begin
         intWaitState := WaitForSingleObject(ProcessInformation.hProcess, 0);
-
         if intWaitState <> WAIT_TIMEOUT then
         begin
           bSuccess := PeekNamedPipe(hChildStd_ERR_Rd, @chBuf[0], BUFSIZE, @dwRead, nil, nil );
@@ -779,9 +727,7 @@ begin
           begin
             dwRead := 0;
             ReadFile( hChildStd_ERR_Rd, chBuf[0], BUFSIZE, dwRead, nil );
-
             sOut := sOut + Copy( chBuf, 0, dwRead );
-
             Sleep(1);
             dwRead := 0;
             bSuccess := PeekNamedPipe(hChildStd_ERR_Rd, @chBuf[0], BUFSIZE, @dwRead, nil, nil );
@@ -789,13 +735,10 @@ begin
             begin
               raise Exception.Create('' + IntToStr(GetLastError));
             end;
-
             Application.ProcessMessages;
           end;
-
           break;
         end;
-
         dwRead := 0;
         bSuccess := PeekNamedPipe(hChildStd_ERR_Rd, @chBuf[0], BUFSIZE, @dwRead, nil, nil );
         if bSuccess and (dwRead <> 0) then
@@ -810,9 +753,7 @@ begin
     finally
       FreeMem(chBuf);
     end;
-
     Sleep(0);
-
     if not Application.Terminated then
     begin
       if (intWaitState = WAIT_OBJECT_0) then
@@ -823,7 +764,6 @@ begin
         end;
       end;
     end;
-
     CloseHandle(hChildStd_ERR_Wr);
     CloseHandle(hChildStd_ERR_Rd);
     CloseHandle(ProcessInformation.hProcess);
@@ -849,11 +789,9 @@ var
   I: Integer;
 begin
   result := 0;
-
   FileList := TStringlist.Create;
   try
     GetFilesInDirectory(aFolder,FileList);
-
     for I := 0 to FileList.Count - 1 do
     begin
       if pos(aPattern,FileList.Strings[i]) > 0 then
@@ -863,9 +801,7 @@ begin
           result := result + 1;
         end;
       end;
-
     end;
-
   finally
     FileList.Free;
   end;
