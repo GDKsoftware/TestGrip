@@ -45,11 +45,11 @@ type
     function GetHasOuterUses: Boolean;
     function GetHasInnerUses: Boolean;
 
-{$IFDEF DELPHI2009_UP}
+    {$IFDEF DELPHI2009_UP}
     function ReadLoopUntilSemiColon(const sIn: string; iStart: integer; var sOut: string): boolean;
-{$ELSE}
+    {$ELSE}
     function ReadLoopUntilSemiColon(const sIn: ansistring; iStart: integer; var sOut: ansistring): boolean;
-{$ENDIF}
+    {$ENDIF}
 
     procedure ParseUsesList( const lstIn: TStrings; const lstOut: TStrings; bIsDkp: boolean = False );
 
@@ -380,17 +380,17 @@ procedure TUnitParser.ExtractAllMethods(const s: TStream; bGetLineNumbers: boole
 var
   bEof: boolean;
   iRead: integer;
-{$IFDEF DELPHI2009_UP}
-  block: string;
+  {$IFDEF DELPHI2009_UP}
   largeblock: string;
   largeblocklowercase: string;
   sMethodDef: string;
-{$ELSE}
+  {$ELSE}
   largeblock: ansistring;
-  block: ansistring;
   largeblocklowercase: ansistring;
   sMethodDef: ansistring;
-{$ENDIF}
+  {$ENDIF}
+  ansiblock: ansistring;
+  ansilargeblock: ansistring;
   i: integer;
   pc, pd, pp, pf: integer;
   bInParams: boolean;
@@ -404,22 +404,23 @@ begin
   bInParams := False;
   sMethodDef := '';
   largeblock := '';
+  ansilargeblock := '';
   bInMethodDef := false;
   iAnotherLineOffset := iLineNumberOffset;
 
   i := 1;
 
   bEof := False;
-  while not (bEof and (i >= Length(largeblock))) do
+  while not (bEof and (i >= Length(ansilargeblock))) do
   begin
-    SetLength(block,FBufferSize);
+    SetLength(ansiblock, FBufferSize);
 
-    if i >= Length(largeblock) then
+    if i >= Length(ansilargeblock) then
     begin
-      iRead := s.Read( block[1], FBufferSize );
+      iRead := s.Read( ansiblock[1], FBufferSize );
       if iRead < FBufferSize then
       begin
-        SetLength(block,iRead);
+        SetLength(ansiblock,iRead);
       end;
 
       if iRead = 0 then
@@ -427,14 +428,21 @@ begin
         bEof := True;
       end;
 
-      largeblock := largeblock + block;
+      ansilargeblock := ansilargeblock + ansiblock;
     end;
+
+    {$IFDEF DELPHI2009_UP}
+    largeblock := string(ansilargeblock);
+    {$ELSE}
+    largeblock := ansilargeblock;
+    {$ENDIF}
 
     if not bInMethodDef then
     begin
       iSkip := Length(largeblock);
 
       largeblocklowercase := LowerCase(largeblock);
+
       pc := PosEx('constructor ', largeblocklowercase, Max(1, i - 11));
       pd := PosEx('destructor ', largeblocklowercase, Max(1, i - 10));
       pp := PosEx('procedure ', largeblocklowercase, Max(1, i - 9));
@@ -741,23 +749,24 @@ var
   bInAnnotation: boolean;
   sHelperWord: ansistring;
   bEof: boolean;
-{$IFDEF DELPHI2009_UP}
+  {$IFDEF DELPHI2009_UP}
   sCurrentClass: string;
   sTypeName: string;
   sPreviousKeyWord: string;
   sCurrentKeyWord: string;
   block: string;
-  sTempLine: string;
   ch: Char;
-{$ELSE}
+  sTempLine: string;
+  {$ELSE}
   sCurrentClass: ansistring;
   sTypeName: ansistring;
   sPreviousKeyWord: ansistring;
   sCurrentKeyWord: ansistring;
   block: ansistring;
-  sTempLine: ansistring;
   ch: AnsiChar;
-{$ENDIF}
+  sTempLine: ansistring;
+  {$ENDIF}
+  ansiblock: ansistring;
   iRead: integer;
   iTotalBytesDone: integer;
   i: Integer;
@@ -842,6 +851,7 @@ begin
   FOuterUsesBoundaries.Stop := 0;
 
   block := '';
+  ansiblock := '';
 
   bEof := False;
 
@@ -849,11 +859,11 @@ begin
 
   s.Seek( 0, soFromBeginning );
 
-  SetLength(block, 3);
-  iRead := s.Read(block[1], 3);
+  SetLength(ansiblock, 3);
+  iRead := s.Read(ansiblock[1], 3);
   if iRead = 3 then
   begin
-    FHasUTF8BOM := (block[1] = #$EF) and (block[2] = #$BB) and (block[3] = #$BF);
+    FHasUTF8BOM := (ansiblock[1] = #$EF) and (ansiblock[2] = #$BB) and (ansiblock[3] = #$BF);
     if not FHasUTF8BOM then
     begin
       s.Seek( 0, soFromBeginning );
@@ -870,14 +880,20 @@ begin
 
   while not bEof do
   begin
-    SetLength(block,FBufferSize);
-    iRead := s.Read( block[1], FBufferSize );
+    SetLength(ansiblock, FBufferSize);
+    iRead := s.Read(ansiblock[1], FBufferSize);
     iTotalBytesDone := iTotalBytesDone + iRead;
     if iRead < FBufferSize then
     begin
-      SetLength(block,iRead);
+      SetLength(ansiblock, iRead);
       bEof := True;
     end;
+
+    {$IFDEF DELPHI2009_UP}
+    block := string(ansiblock);
+    {$ELSE}
+    block := ansiblock;
+    {$ENDIF}
 
     if bGetLineNumbers then
     begin
@@ -1047,7 +1063,7 @@ begin
 
           if bInProperty and (bInPublic or bInPublished) then
           begin
-            pdef := TPropertyDefinition.Create( sTempLine, sCurrentClass );
+            pdef := TPropertyDefinition.Create(sTempLine, sCurrentClass);
             if pdef.PropertyName <> '' then
             begin
               FPropertyList.Add( pdef );
