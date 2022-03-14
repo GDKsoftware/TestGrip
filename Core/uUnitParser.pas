@@ -417,7 +417,7 @@ begin
 
     if i >= Length(ansilargeblock) then
     begin
-      iRead := s.Read( ansiblock[1], FBufferSize );
+      iRead := s.Read(ansiblock[1], FBufferSize );
       if iRead < FBufferSize then
       begin
         SetLength(ansiblock,iRead);
@@ -431,15 +431,15 @@ begin
       ansilargeblock := ansilargeblock + ansiblock;
     end;
 
-    {$IFDEF DELPHI2009_UP}
-    largeblock := string(ansilargeblock);
-    {$ELSE}
-    largeblock := ansilargeblock;
-    {$ENDIF}
-
     if not bInMethodDef then
     begin
-      iSkip := Length(largeblock);
+      iSkip := Length(ansilargeblock);
+
+      {$IFDEF DELPHI2009_UP}
+      largeblock := string(ansilargeblock);
+      {$ELSE}
+      largeblock := ansilargeblock;
+      {$ENDIF}
 
       largeblocklowercase := LowerCase(largeblock);
 
@@ -450,9 +450,9 @@ begin
       largeblocklowercase := '';
 
       {$IFDEF DELPHI2009_UP}
-      if (pc > 2) and not CharInSet(largeblock[pc - 1], [#$0A,#$0D,#$07,#$20]) then
+      if (pc > 2) and not CharInSet(ansilargeblock[pc - 1], [#$0A,#$0D,#$07,#$20]) then
       {$ELSE}
-      if (pc > 2) and not (largeblock[pc - 1] in [#$0A,#$0D,#$07,#$20]) then
+      if (pc > 2) and not (ansilargeblock[pc - 1] in [#$0A,#$0D,#$07,#$20]) then
       {$ENDIF}
       begin
         iSkip := Min(pc + 12, iSkip);
@@ -460,9 +460,9 @@ begin
       end;
 
       {$IFDEF DELPHI2009_UP}
-      if (pd > 2) and not CharInSet(largeblock[pd - 1], [#$0A,#$0D,#$07,#$20]) then
+      if (pd > 2) and not CharInSet(ansilargeblock[pd - 1], [#$0A,#$0D,#$07,#$20]) then
       {$ELSE}
-      if (pd > 2) and not (largeblock[pd - 1] in [#$0A,#$0D,#$07,#$20]) then
+      if (pd > 2) and not (ansilargeblock[pd - 1] in [#$0A,#$0D,#$07,#$20]) then
       {$ENDIF}
       begin
         iSkip := Min(pd + 11, iSkip);
@@ -470,9 +470,9 @@ begin
       end;
 
       {$IFDEF DELPHI2009_UP}
-      if (pp > 2) and not CharInSet(largeblock[pp - 1], [#$0A,#$0D,#$07,#$20]) then
+      if (pp > 2) and not CharInSet(ansilargeblock[pp - 1], [#$0A,#$0D,#$07,#$20]) then
       {$ELSE}
-      if (pp > 2) and not (largeblock[pp - 1] in [#$0A,#$0D,#$07,#$20]) then
+      if (pp > 2) and not (ansilargeblock[pp - 1] in [#$0A,#$0D,#$07,#$20]) then
       {$ENDIF}
       begin
         iSkip := Min(pp + 10, iSkip);
@@ -480,9 +480,9 @@ begin
       end;
 
       {$IFDEF DELPHI2009_UP}
-      if (pf > 2) and not CharInSet(largeblock[pf - 1], [#$0A,#$0D,#$07,#$20]) then
+      if (pf > 2) and not CharInSet(ansilargeblock[pf - 1], [#$0A,#$0D,#$07,#$20]) then
       {$ELSE}
-      if (pf > 2) and not (largeblock[pf - 1] in [#$0A,#$0D,#$07,#$20]) then
+      if (pf > 2) and not (ansilargeblock[pf - 1] in [#$0A,#$0D,#$07,#$20]) then
       {$ENDIF}
       begin
         iSkip := Min(pf + 9, iSkip);
@@ -551,22 +551,22 @@ begin
 
     if bInMethodDef then
     begin
-      sMethodDef := sMethodDef + largeblock[i];
+      sMethodDef := sMethodDef + Char(ansilargeblock[i]);
 
       if bInParams then
       begin
-        if largeblock[i] = ')' then
+        if ansilargeblock[i] = ')' then
         begin
           bInParams := False;
         end;
       end
       else
       begin
-        if largeblock[i] = '(' then
+        if ansilargeblock[i] = '(' then
         begin
           bInParams := True;
         end
-        else if largeblock[i] = ';' then
+        else if ansilargeblock[i] = ';' then
         begin
           bInMethodDef := False;
 
@@ -575,7 +575,7 @@ begin
           begin
             if bGetLineNumbers then
             begin
-              iMethodLineNumber := TCommonStringFunctions.CountLines(largeblock, lfDos, i);
+              iMethodLineNumber := TCommonStringFunctions.CountLines(string(ansilargeblock), lfDos, i);
               iMethodDefinitionLineCount := TCommonStringFunctions.CountLines(sMethodDef, lfDos);
 
               fdef.LineNumber := iAnotherLineOffset + iMethodLineNumber - iMethodDefinitionLineCount;
@@ -594,7 +594,7 @@ begin
             sMethodDef := '';
           end;
 
-          largeblock := Copy(largeblock, i + 1);
+          ansilargeblock := Copy(ansilargeblock, i + 1);
           i := 1;
         end;
       end;
