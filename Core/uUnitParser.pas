@@ -383,11 +383,14 @@ var
   {$IFDEF DELPHI2009_UP}
   largeblock: string;
   largeblocklowercase: string;
+  sMethodDef: string;
+  {$ELSE}
+  largeblock: ansistring;
+  largeblocklowercase: ansistring;
+  sMethodDef: ansistring;
   {$ENDIF}
   ansiblock: ansistring;
   ansilargeblock: ansistring;
-  ansilargeblocklowercase: ansistring;
-  sMethodDef: ansistring;
   i: integer;
   pc, pd, pp, pf: integer;
   bInParams: boolean;
@@ -400,9 +403,7 @@ var
 begin
   bInParams := False;
   sMethodDef := '';
-  {$IFDEF DELPHI2009_UP}
   largeblock := '';
-  {$ENDIF}
   ansilargeblock := '';
   bInMethodDef := false;
   iAnotherLineOffset := iLineNumberOffset;
@@ -412,7 +413,7 @@ begin
   bEof := False;
   while not (bEof and (i >= Length(ansilargeblock))) do
   begin
-    SetLength(ansiblock,FBufferSize);
+    SetLength(ansiblock, FBufferSize);
 
     if i >= Length(ansilargeblock) then
     begin
@@ -430,30 +431,28 @@ begin
       ansilargeblock := ansilargeblock + ansiblock;
     end;
 
+    {$IFDEF DELPHI2009_UP}
+    largeblock := string(ansilargeblock);
+    {$ELSE}
+    largeblock := ansilargeblock;
+    {$ENDIF}
+
     if not bInMethodDef then
     begin
-      iSkip := Length(ansilargeblock);
-      {$IFDEF DELPHI2009_UP}
-      largeblock := string(ansilargeblock);
+      iSkip := Length(largeblock);
+
       largeblocklowercase := LowerCase(largeblock);
+
       pc := PosEx('constructor ', largeblocklowercase, Max(1, i - 11));
       pd := PosEx('destructor ', largeblocklowercase, Max(1, i - 10));
       pp := PosEx('procedure ', largeblocklowercase, Max(1, i - 9));
       pf := PosEx('function ', largeblocklowercase, Max(1, i - 8));
       largeblocklowercase := '';
-      {$ELSE}
-      ansilargeblocklowercase := LowerCase(ansilargeblock);
-      pc := PosEx('constructor ', ansilargeblocklowercase, Max(1, i - 11));
-      pd := PosEx('destructor ', ansilargeblocklowercase, Max(1, i - 10));
-      pp := PosEx('procedure ', ansilargeblocklowercase, Max(1, i - 9));
-      pf := PosEx('function ', ansilargeblocklowercase, Max(1, i - 8));
-      ansilargeblocklowercase := '';
-      {$ENDIF}
 
       {$IFDEF DELPHI2009_UP}
-      if (pc > 2) and not CharInSet(ansilargeblock[pc - 1], [#$0A,#$0D,#$07,#$20]) then
+      if (pc > 2) and not CharInSet(largeblock[pc - 1], [#$0A,#$0D,#$07,#$20]) then
       {$ELSE}
-      if (pc > 2) and not (ansilargeblock[pc - 1] in [#$0A,#$0D,#$07,#$20]) then
+      if (pc > 2) and not (largeblock[pc - 1] in [#$0A,#$0D,#$07,#$20]) then
       {$ENDIF}
       begin
         iSkip := Min(pc + 12, iSkip);
@@ -461,9 +460,9 @@ begin
       end;
 
       {$IFDEF DELPHI2009_UP}
-      if (pd > 2) and not CharInSet(ansilargeblock[pd - 1], [#$0A,#$0D,#$07,#$20]) then
+      if (pd > 2) and not CharInSet(largeblock[pd - 1], [#$0A,#$0D,#$07,#$20]) then
       {$ELSE}
-      if (pd > 2) and not (ansilargeblock[pd - 1] in [#$0A,#$0D,#$07,#$20]) then
+      if (pd > 2) and not (largeblock[pd - 1] in [#$0A,#$0D,#$07,#$20]) then
       {$ENDIF}
       begin
         iSkip := Min(pd + 11, iSkip);
@@ -471,9 +470,9 @@ begin
       end;
 
       {$IFDEF DELPHI2009_UP}
-      if (pp > 2) and not CharInSet(ansilargeblock[pp - 1], [#$0A,#$0D,#$07,#$20]) then
+      if (pp > 2) and not CharInSet(largeblock[pp - 1], [#$0A,#$0D,#$07,#$20]) then
       {$ELSE}
-      if (pp > 2) and not (ansilargeblock[pp - 1] in [#$0A,#$0D,#$07,#$20]) then
+      if (pp > 2) and not (largeblock[pp - 1] in [#$0A,#$0D,#$07,#$20]) then
       {$ENDIF}
       begin
         iSkip := Min(pp + 10, iSkip);
@@ -481,9 +480,9 @@ begin
       end;
 
       {$IFDEF DELPHI2009_UP}
-      if (pf > 2) and not CharInSet(ansilargeblock[pf - 1], [#$0A,#$0D,#$07,#$20]) then
+      if (pf > 2) and not CharInSet(largeblock[pf - 1], [#$0A,#$0D,#$07,#$20]) then
       {$ELSE}
-      if (pf > 2) and not (ansilargeblock[pf - 1] in [#$0A,#$0D,#$07,#$20]) then
+      if (pf > 2) and not (largeblock[pf - 1] in [#$0A,#$0D,#$07,#$20]) then
       {$ENDIF}
       begin
         iSkip := Min(pf + 9, iSkip);
@@ -552,32 +551,32 @@ begin
 
     if bInMethodDef then
     begin
-      sMethodDef := sMethodDef + ansilargeblock[i];
+      sMethodDef := sMethodDef + largeblock[i];
 
       if bInParams then
       begin
-        if ansilargeblock[i] = ')' then
+        if largeblock[i] = ')' then
         begin
           bInParams := False;
         end;
       end
       else
       begin
-        if ansilargeblock[i] = '(' then
+        if largeblock[i] = '(' then
         begin
           bInParams := True;
         end
-        else if ansilargeblock[i] = ';' then
+        else if largeblock[i] = ';' then
         begin
           bInMethodDef := False;
 
-          fdef := TMethodDefinition.Create(string(sMethodDef), false, csUnknown);
+          fdef := TMethodDefinition.Create(sMethodDef, false, csUnknown);
           if IsValidPascalIdentifier(fdef.DefMethodName) then
           begin
             if bGetLineNumbers then
             begin
-              iMethodLineNumber := TCommonStringFunctions.CountLines(string(ansilargeblock), lfDos, i);
-              iMethodDefinitionLineCount := TCommonStringFunctions.CountLines(string(sMethodDef), lfDos);
+              iMethodLineNumber := TCommonStringFunctions.CountLines(largeblock, lfDos, i);
+              iMethodDefinitionLineCount := TCommonStringFunctions.CountLines(sMethodDef, lfDos);
 
               fdef.LineNumber := iAnotherLineOffset + iMethodLineNumber - iMethodDefinitionLineCount;
 
@@ -595,7 +594,7 @@ begin
             sMethodDef := '';
           end;
 
-          ansilargeblock := Copy(ansilargeblock, i + 1);
+          largeblock := Copy(largeblock, i + 1);
           i := 1;
         end;
       end;
